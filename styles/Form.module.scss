@@ -1,0 +1,29 @@
+@use "./partials/abstracts/mixins" as *;
+@use "./partials/abstracts/variables" as *;
+
+.form {
+  display: grid;
+  border: 0.5px solid $black;
+  grid-column: 2/4;
+  grid-row: 6;
+  height: fit-content;
+
+  &Group {
+    display: flex;
+    padding: 8px;
+
+    &__label {
+      width: 52px;
+      padding-right: 8px;
+    }
+  }
+
+  &__button {
+    grid-column: 2/4;
+    grid-row: 10;
+    width: fit-content;
+    justify-self: center;
+    align-content: center;
+    height: fit-content;
+  }
+}

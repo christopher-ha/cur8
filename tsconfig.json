@@ -24,7 +24,9 @@
     "pages/hello.js",
     "pages/_app.jsx",
     "pages/index.jsx",
-    "pages/login.js"
+    "pages/login.js",
+    "utils/customVerificationRequest.js",
+    "pages/api/auth/[...nextauth].js"
   ],
   "exclude": ["node_modules"]
 }

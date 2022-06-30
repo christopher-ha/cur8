@@ -1,16 +1,52 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+@use "./partials/base/typography";
+@use "./partials/base/reset";
+@use "./partials/abstracts/mixins" as *;
+@use "./partials/abstracts/variables" as *;
+
+button {
+  padding: $p0 $p1;
+  border: 0.5px solid $black;
+  border-radius: 32px;
+  background-color: $white;
+  text-transform: uppercase;
+
+  @include tablet {
+    padding: $p1 $p2;
+  }
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+main {
+  display: grid;
+  height: 100vh;
+  grid-template-columns: repeat(4, [col-start] 1fr);
+  grid-template-rows: repeat(12, [col-start] 1fr);
+  grid-gap: 1rem 1rem;
+  margin: 0 1rem;
 }
 
-* {
-  box-sizing: border-box;
+form {
+  display: grid;
+  border: 0.5px solid $black;
+  grid-column: 2/4;
+  grid-row: 6;
+  height: fit-content;
+
+  .form__group {
+    display: flex;
+    padding: 8px;
+
+    label {
+      width: 52px;
+      padding-right: 8px;
+    }
+  }
+}
+
+button {
+  grid-column: 2/4;
+  grid-row: 10;
+  width: fit-content;
+  justify-self: center;
+  align-content: center;
+  height: fit-content;
 }

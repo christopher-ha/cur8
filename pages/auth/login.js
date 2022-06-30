@@ -1,15 +1,27 @@
 import { getCsrfToken } from "next-auth/react";
+import styles from "../../styles/Form.module.scss";
 
 export default function SignIn({ csrfToken }) {
   return (
-    <form method="post" action="/api/auth/signin/email">
-      <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-      <label>
-        Email
-        <input type="email" id="email" name="email" />
-      </label>
-      <button type="submit">Sign in with Email</button>
-    </form>
+    <main>
+      <form
+        className={styles.form}
+        id="login"
+        method="post"
+        action="/api/auth/signin/email"
+      >
+        <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
+        <div className={styles.formGroup}>
+          <label className={styles.formGroup__label} htmlFor="email">
+            Email
+          </label>
+          <input type="email" id="email" name="email" placeholder="-" />
+        </div>
+      </form>
+      <button className={styles.formGroup__button} form="login" type="submit">
+        Sign in with Email
+      </button>
+    </main>
   );
 }
 
