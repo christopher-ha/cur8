@@ -1,7 +1,3 @@
-import { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
-import styles from "../styles/Home.module.scss";
 import React from "react";
 import { useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
@@ -21,6 +17,7 @@ const Home = () => {
   const uploadFile = async () => {
     setUploadingStatus("Uploading the file to AWS S3");
 
+    // After clicking upload, send the file data to the uploadFile API so we can generate the uploadURL
     let { data } = await axios.post("/api/s3/uploadFile", {
       name: file.name,
       type: file.type,
@@ -28,13 +25,18 @@ const Home = () => {
 
     console.log(data);
 
-    const url = data.url;
-    let { data: newData } = await axios.put(url, file, {
+    // Front-end makes a PUT request to the uploadURL to store the image in the bucket.
+    const uploadURL = data.uploadURL;
+    let { data: newData } = await axios.put(uploadURL, file, {
       headers: {
         "Content-type": file.type,
         "Access-Control-Allow-Origin": "*",
       },
     });
+
+    // Get the actual image URL by splitting the uploadURL by the ? and converting it to a string
+    const imageURL = uploadURL.split("?")[0].toString();
+    console.log(imageURL);
 
     setUploadedFile(BUCKET_URL + file.name);
     setFile(null);
@@ -57,9 +59,9 @@ const Home = () => {
         </button>
       </div>
 
-      <div className="container flex items-center p-4 mx-auto min-h-screen justify-center">
+      <div className="container">
         <p>Please select a file to upload</p>
-        <input type="file" onChange={(e) => selectFile(e)} />
+        <input type="file" onChange={(e) => selectFile(e)} accept="image/*" />
         {file && (
           <>
             <p>Selected file: {file.name}</p>
