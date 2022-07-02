@@ -55,7 +55,7 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Campaign {
+model Campaigns {
   id          String       @id @default(cuid())
   name        String
   description String?
@@ -70,27 +70,27 @@ model Campaign {
 }
 
 model Team {
-  id          String   @id @default(cuid())
-  campaign    Campaign @relation(fields: [campaignId], references: [id])
-  campaignId  String   @unique
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String   @unique
+  id          String    @id @default(cuid())
+  campaign    Campaigns @relation(fields: [campaignId], references: [id])
+  campaignId  String    @unique
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String    @unique
   role        String
   permissions String
 }
 
 model CallSheet {
-  id         String   @id @default(cuid())
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId String   @unique
-  time       DateTime @db.Time
+  id         String    @id @default(cuid())
+  campaign   Campaigns @relation(fields: [campaignId], references: [id])
+  campaignId String    @unique
+  time       DateTime  @db.Time
   task       String
   notes      String?
 }
 
 model Wardrobe {
   id                    String       @id @default(cuid())
-  campaign              Campaign     @relation(fields: [campaignId], references: [id])
+  campaign              Campaigns    @relation(fields: [campaignId], references: [id])
   campaignId            String       @unique
   url                   String
   brand                 String
@@ -105,9 +105,9 @@ model Wardrobe {
 }
 
 model Moodboards {
-  id         String   @id @default(cuid())
-  campaign   Campaign @relation(fields: [campaignId], references: [id])
-  campaignId String   @unique
+  id         String    @id @default(cuid())
+  campaign   Campaigns @relation(fields: [campaignId], references: [id])
+  campaignId String    @unique
   name       String
   images     Images?
 }
@@ -122,7 +122,7 @@ model Images {
 
 model Models {
   id         String       @id @default(cuid())
-  campaign   Campaign     @relation(fields: [campaignId], references: [id])
+  campaign   Campaigns    @relation(fields: [campaignId], references: [id])
   campaignId String       @unique
   name       String
   urlFace    String
@@ -134,19 +134,19 @@ model Models {
 }
 
 model SavedLooks {
-  id           String   @id @default(cuid())
-  campaign     Campaign @relation(fields: [campaignId], references: [id])
-  campaignId   String   @unique
-  models       Models   @relation(fields: [modelId], references: [id])
+  id           String    @id @default(cuid())
+  campaign     Campaigns @relation(fields: [campaignId], references: [id])
+  campaignId   String    @unique
+  models       Models    @relation(fields: [modelId], references: [id])
   modelId      String
-  top          Wardrobe @relation("Top", fields: [topId], references: [id])
+  top          Wardrobe  @relation("Top", fields: [topId], references: [id])
   topId        String
-  bottom       Wardrobe @relation("Bottom", fields: [bottomId], references: [id])
+  bottom       Wardrobe  @relation("Bottom", fields: [bottomId], references: [id])
   bottomId     String
-  shoes        Wardrobe @relation("Shoes", fields: [shoesId], references: [id])
+  shoes        Wardrobe  @relation("Shoes", fields: [shoesId], references: [id])
   shoesId      String
-  accessory1   Wardrobe @relation("Accessory1", fields: [accessory1Id], references: [id])
+  accessory1   Wardrobe  @relation("Accessory1", fields: [accessory1Id], references: [id])
   accessory1Id String
-  accessory2   Wardrobe @relation("Accessory2", fields: [accessory2Id], references: [id])
+  accessory2   Wardrobe  @relation("Accessory2", fields: [accessory2Id], references: [id])
   accessory2Id String
 }
