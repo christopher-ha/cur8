@@ -1,11 +1,27 @@
 @use "./partials/abstracts/mixins" as *;
 @use "./partials/abstracts/variables" as *;
 
-.form {
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  // align-items: center;
+  flex-wrap: wrap;
+  height: 100vh;
+  // height: fill-available;
+  // height: -webkit-fill-available;
+}
+
+.container {
   display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 1rem;
+  margin: 0 1rem;
+}
+
+.form {
+  grid-column: 2 / span 2;
   border: 0.5px solid $black;
-  grid-column: 2/4;
-  grid-row: 6;
   height: fit-content;
 
   &Group {
@@ -15,15 +31,16 @@
     &__label {
       width: 52px;
       padding-right: 8px;
+      vertical-align: baseline;
+    }
+
+    &__input {
+      flex-grow: 1;
     }
   }
 
   &__button {
-    grid-column: 2/4;
-    grid-row: 10;
-    width: fit-content;
-    justify-self: center;
-    align-content: center;
-    height: fit-content;
+    margin-top: 3rem;
+    align-self: center;
   }
 }

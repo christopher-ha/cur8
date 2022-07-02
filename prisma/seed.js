@@ -1,5 +1,5 @@
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+// const { PrismaClient } = require("@prisma/client");
+const { prisma } = require("../utils/db");
 
 async function main() {
   const campaign = await prisma.campaigns.create({
