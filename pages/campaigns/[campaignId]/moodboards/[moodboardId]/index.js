@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import UploadImages from "../../../../../components/Upload";
+import UploadImages from "@/components/Upload/Upload";
 
 export default function Images() {
   const router = useRouter();

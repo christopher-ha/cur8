@@ -1,7 +1,7 @@
-@use "./partials/base/typography";
-@use "./partials/base/reset";
-@use "./partials/abstracts/mixins" as *;
-@use "./partials/abstracts/variables" as *;
+@use "@/partials/base/typography";
+@use "@/partials/base/reset";
+@use "@/partials/abstracts/mixins" as *;
+@use "@/partials/abstracts/variables" as *;
 
 button {
   color: $black;

@@ -1,7 +1,6 @@
 import { getCsrfToken } from "next-auth/react";
-import styles from "../../styles/Form.module.scss";
-import AuthForm from "../../components/AuthForm";
-import Header from "../../components/Header";
+import AuthForm from "@/components/Forms/AuthLogin/AuthLogin";
+import Header from "@/components/Header/Header";
 
 export default function SignIn({ csrfToken }) {
   return (

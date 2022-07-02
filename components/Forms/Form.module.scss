@@ -1,5 +1,5 @@
-@use "./partials/abstracts/mixins" as *;
-@use "./partials/abstracts/variables" as *;
+@use "@/partials/abstracts/mixins" as *;
+@use "@/partials/abstracts/variables" as *;
 
 .main {
   display: flex;

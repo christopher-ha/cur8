@@ -1,5 +1,5 @@
 // import { getCsrfToken } from "next-auth/react";
-import styles from "../styles/Form.module.scss";
+import styles from "@/components/Forms/Form.module.scss";
 
 export default function AuthForm({ csrfToken, buttonText }) {
   return (

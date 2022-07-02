@@ -3,8 +3,8 @@ import EmailProvider from "next-auth/providers/email";
 import nodemailer from "nodemailer";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 // import { PrismaClient } from "@prisma/client";
-import customVerificationRequest from "../../../utils/customVerificationRequest";
-import { prisma } from "../../../utils/db";
+import customVerificationRequest from "@/utils/customVerificationRequest";
+import { prisma } from "@/utils/db";
 
 // Instantiate Prisma Client
 // const prisma = new PrismaClient();

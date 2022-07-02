@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/components/*": ["components/*"],
+      "@/partials/*": ["styles/partials/*"],
+      "@/utils/*": ["utils/*"]
+    },
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -26,7 +32,8 @@
     "pages/index.jsx",
     "pages/login.js",
     "utils/customVerificationRequest.js",
-    "pages/api/auth/[...nextauth].js"
-, "pages/api/s3/uploadFile.js"  ],
+    "pages/api/auth/[...nextauth].js",
+    "pages/api/s3/uploadFile.js"
+  ],
   "exclude": ["node_modules"]
 }
