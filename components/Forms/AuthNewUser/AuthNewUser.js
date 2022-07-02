@@ -1,6 +1,20 @@
+import { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import styles from "@/components/Forms/Form.module.scss";
+import axios from "axios";
 
-export default function newUser() {
+export default function AuthNewUser() {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    reset,
+  } = useForm();
+
+  const submitHandler = (values) => {
+    console.log(values);
+  };
+
   return (
     <main className={styles.main}>
       <div className={styles.container}>
@@ -8,18 +22,20 @@ export default function newUser() {
           className={styles.form}
           id="profile"
           method="post"
-          action="/api/auth/signin/email"
+          onSubmit={handleSubmit(submitHandler)}
+          // action="/api/auth/signin/email"
         >
           <div className={styles.formGroup}>
-            <label className={styles.formGroup__label} htmlFor="email">
-              Email
+            <label className={styles.formGroup__label} htmlFor="name">
+              Name
             </label>
             <input
               className={styles.formGroup__input}
-              type="email"
-              id="email"
-              name="email"
+              type="text"
               placeholder="*"
+              {...register("name", {
+                required: "Enter a valid name",
+              })}
             />
           </div>
           <div className={styles.formGroup}>
@@ -29,9 +45,9 @@ export default function newUser() {
             <input
               className={styles.formGroup__input}
               type="text"
-              id="instagram"
-              name="instagram"
-              placeholder="*"
+              placeholder="-"
+              maxLength="30"
+              {...register("instagram", { required: false })}
             />
           </div>
           <div className={styles.formGroup}>
@@ -41,14 +57,23 @@ export default function newUser() {
             <input
               className={styles.formGroup__input}
               type="tel"
-              id="number"
-              name="number"
+              maxLength="15"
               // pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
               placeholder="*"
-              maxLength="10"
+              {...register("number", {
+                required: "Enter a valid phone number.",
+                // minLength: {
+                //   value: 10,
+                //   message: "This phone number is too short.",
+                // },
+              })}
             />
           </div>
         </form>
+      </div>
+      <div className={styles.form__errors}>
+        <p>{errors?.name?.message}</p>
+        <p>{errors?.number?.message}</p>
       </div>
       <button className={styles.form__button} form="profile" type="submit">
         Save
