@@ -7,12 +7,7 @@ export default function SignIn({ csrfToken }) {
   return (
     <>
       <Header text={"CREATE AN ACCOUNT"} />
-      <main className={styles.main}>
-        <AuthForm csrfToken={csrfToken} />
-        <button className={styles.form__button} form="login" type="submit">
-          Sign up with Email
-        </button>
-      </main>
+      <AuthForm csrfToken={csrfToken} buttonText={"SIGN UP WITH EMAIL"} />;
     </>
   );
 }
