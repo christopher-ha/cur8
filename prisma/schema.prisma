@@ -63,7 +63,7 @@ model Campaigns {
   date        DateTime?    @db.Date
   team        Team?
   callsheet   CallSheet?
-  wardrobe    Wardrobe?
+  wardrobe    Wardrobe[]
   moodboards  Moodboards[]
   Model       Models[]
   SavedLooks  SavedLooks[]
@@ -91,7 +91,7 @@ model CallSheet {
 model Wardrobe {
   id                    String       @id @default(cuid())
   campaign              Campaigns    @relation(fields: [campaignId], references: [id])
-  campaignId            String       @unique
+  campaignId            String
   url                   String
   brand                 String
   description           String
@@ -109,13 +109,13 @@ model Moodboards {
   campaign   Campaigns @relation(fields: [campaignId], references: [id])
   campaignId String    @unique
   name       String
-  images     Images?
+  images     Images[]
 }
 
 model Images {
   id          String     @id @default(cuid())
   moodboards  Moodboards @relation(fields: [moodboardId], references: [id])
-  moodboardId String     @unique
+  moodboardId String
   url         String
   description String?
 }
@@ -123,7 +123,7 @@ model Images {
 model Models {
   id         String       @id @default(cuid())
   campaign   Campaigns    @relation(fields: [campaignId], references: [id])
-  campaignId String       @unique
+  campaignId String
   name       String
   urlFace    String
   urlBody    String
@@ -136,7 +136,7 @@ model Models {
 model SavedLooks {
   id           String    @id @default(cuid())
   campaign     Campaigns @relation(fields: [campaignId], references: [id])
-  campaignId   String    @unique
+  campaignId   String
   models       Models    @relation(fields: [modelId], references: [id])
   modelId      String
   top          Wardrobe  @relation("Top", fields: [topId], references: [id])
