@@ -27,6 +27,6 @@
     "pages/login.js",
     "utils/customVerificationRequest.js",
     "pages/api/auth/[...nextauth].js"
-  ],
+, "pages/api/s3/uploadFile.js"  ],
   "exclude": ["node_modules"]
 }

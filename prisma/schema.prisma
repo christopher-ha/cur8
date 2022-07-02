@@ -4,22 +4,22 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -42,6 +42,9 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  instagram     String?
+  number        BigInt?
+  team          Team[]
 }
 
 model VerificationToken {
@@ -50,4 +53,100 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Campaign {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  location    String?
+  date        DateTime?    @db.Date
+  team        Team?
+  callsheet   CallSheet?
+  wardrobe    Wardrobe?
+  moodboards  Moodboards[]
+  Model       Models[]
+  SavedLooks  SavedLooks[]
+}
+
+model Team {
+  id          String   @id @default(cuid())
+  campaign    Campaign @relation(fields: [campaignId], references: [id])
+  campaignId  String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String   @unique
+  role        String
+  permissions String
+}
+
+model CallSheet {
+  id         String   @id @default(cuid())
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String   @unique
+  time       DateTime @db.Time
+  task       String
+  notes      String?
+}
+
+model Wardrobe {
+  id                    String       @id @default(cuid())
+  campaign              Campaign     @relation(fields: [campaignId], references: [id])
+  campaignId            String       @unique
+  url                   String
+  brand                 String
+  description           String
+  category              String
+  size                  String?
+  savedLooks_top        SavedLooks[] @relation("Top")
+  savedLooks_bottom     SavedLooks[] @relation("Bottom")
+  savedLooks_shoes      SavedLooks[] @relation("Shoes")
+  savedLooks_accessory1 SavedLooks[] @relation("Accessory1")
+  savedLooks_accessory2 SavedLooks[] @relation("Accessory2")
+}
+
+model Moodboards {
+  id         String   @id @default(cuid())
+  campaign   Campaign @relation(fields: [campaignId], references: [id])
+  campaignId String   @unique
+  name       String
+  images     Images?
+}
+
+model Images {
+  id          String     @id @default(cuid())
+  moodboards  Moodboards @relation(fields: [moodboardId], references: [id])
+  moodboardId String     @unique
+  url         String
+  description String?
+}
+
+model Models {
+  id         String       @id @default(cuid())
+  campaign   Campaign     @relation(fields: [campaignId], references: [id])
+  campaignId String       @unique
+  name       String
+  urlFace    String
+  urlBody    String
+  instagram  String?
+  agency     String?
+  contact    String
+  SavedLooks SavedLooks[]
+}
+
+model SavedLooks {
+  id           String   @id @default(cuid())
+  campaign     Campaign @relation(fields: [campaignId], references: [id])
+  campaignId   String   @unique
+  models       Models   @relation(fields: [modelId], references: [id])
+  modelId      String
+  top          Wardrobe @relation("Top", fields: [topId], references: [id])
+  topId        String
+  bottom       Wardrobe @relation("Bottom", fields: [bottomId], references: [id])
+  bottomId     String
+  shoes        Wardrobe @relation("Shoes", fields: [shoesId], references: [id])
+  shoesId      String
+  accessory1   Wardrobe @relation("Accessory1", fields: [accessory1Id], references: [id])
+  accessory1Id String
+  accessory2   Wardrobe @relation("Accessory2", fields: [accessory2Id], references: [id])
+  accessory2Id String
 }

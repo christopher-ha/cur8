@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import UploadImages from "../../../../../components/Upload";
 
 export default function Images() {
   const router = useRouter();
@@ -7,6 +8,7 @@ export default function Images() {
   return (
     <div>
       <p>This is a single moodboard. Here is the ID: {moodboardId}</p>
+      <UploadImages />
     </div>
   );
 }
