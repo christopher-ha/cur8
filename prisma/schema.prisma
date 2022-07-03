@@ -43,7 +43,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   instagram     String?
-  number        BigInt?
+  number        String?
   team          Team[]
 }
 
