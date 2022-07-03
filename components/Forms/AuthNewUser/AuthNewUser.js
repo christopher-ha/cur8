@@ -2,8 +2,11 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import styles from "@/components/Forms/Form.module.scss";
 import axios from "axios";
+// import { useSession } from "next-auth/react";
 
 export default function AuthNewUser() {
+  // const { data: session, status } = useSession();
+  // console.log(session?.user.id, status);
   const {
     register,
     formState: { errors },
@@ -11,9 +14,39 @@ export default function AuthNewUser() {
     reset,
   } = useForm();
 
-  const submitHandler = (values) => {
-    console.log(values);
+  const submitData = async (values) => {
+    let config = {
+      method: "POST",
+      url: `http://localhost:3000/api/profile`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: values,
+    };
+
+    try {
+      const response = await axios(config);
+      console.log(response);
+      if (response.data.status == 200) {
+        console.log("Success");
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
+
+  //   try {
+  //   const response = await axios.post(
+  //     "http://localhost:3000/api/test",
+  //     values
+  //   );
+  //   console.log(response);
+  //   if (response.data.status == 200) {
+  //     console.log("Success");
+  //   }
+  // } catch (err) {
+  //   console.log(err);
+  // }
 
   return (
     <main className={styles.main}>
@@ -22,7 +55,7 @@ export default function AuthNewUser() {
           className={styles.form}
           id="profile"
           method="post"
-          onSubmit={handleSubmit(submitHandler)}
+          onSubmit={handleSubmit(submitData)}
           // action="/api/auth/signin/email"
         >
           <div className={styles.formGroup}>

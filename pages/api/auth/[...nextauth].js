@@ -32,5 +32,16 @@ export default NextAuth({
     verifyRequest: "/auth/verify-request", // (used for check email message)
     newUser: "/auth/new-user", // New users will be directed here on first sign in (leave the property out if not of interest)
   },
+  callbacks: {
+    session: async ({ session, token }) => {
+      if (session?.user) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+  },
+  session: {
+    strategy: "jwt",
+  },
   adapter: PrismaAdapter(prisma),
 });

@@ -9,6 +9,6 @@ import AuthNewUser from "@/components/Forms/AuthNewUser/AuthNewUser";
 //   console.log(values);
 // };
 
-export default function newUser({ baseUrl }) {
+export default function NewUser() {
   return <AuthNewUser />;
 }
