@@ -5,7 +5,7 @@ import Header from "@/components/Header/Header";
 export default function SignIn({ csrfToken }) {
   return (
     <>
-      <Header text={"LOG IN"} />
+      <Header title={"Log In"} campaign={"Test"} logoVisible={false} />
       <AuthForm csrfToken={csrfToken} buttonText={"LOG IN WITH EMAIL"} />;
     </>
   );
