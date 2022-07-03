@@ -1,11 +1,15 @@
 import { getCsrfToken } from "next-auth/react";
 import AuthForm from "@/components/Forms/AuthLogin/AuthLogin";
 import Header from "@/components/Header/Header";
+import Head from "next/head";
 
 export default function SignIn({ csrfToken }) {
   return (
     <>
-      <Header text={"CREATE AN ACCOUNT"} />
+      <Head>
+        <title>Sign Up</title>
+      </Head>
+      <Header title={"CREATE AN ACCOUNT"} logoVisible={false} />
       <AuthForm csrfToken={csrfToken} buttonText={"SIGN UP WITH EMAIL"} />;
     </>
   );
