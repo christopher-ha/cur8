@@ -79,3 +79,36 @@ input[type="text"]::placeholder {
 :-ms-input-placeholder {
   text-align: center;
 }
+
+/* Relative positioning for date picker
+Display block to center date on Safari */
+input[type="date"] {
+  position: relative;
+  display: block;
+  text-align: center;
+}
+
+/* Make calendar picker take up entire input field.
+https://stackoverflow.com/a/45461709/19416953 */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  background: transparent;
+  color: transparent;
+  cursor: pointer;
+  height: auto;
+  width: auto;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+/* adjust increase/decrease button */
+input[type="date"]::-webkit-inner-spin-button {
+  z-index: 1;
+}
+
+/* adjust clear button */
+input[type="date"]::-webkit-clear-button {
+  z-index: 1;
+}

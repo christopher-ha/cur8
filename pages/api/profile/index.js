@@ -7,15 +7,17 @@ export default async function handle(req, res) {
   });
   const userId = session.user.id;
 
-  const { name, instagram, number } = req.body;
-  console.log(name, instagram, number);
+  const { name, role, instagram, number } = req.body;
+  console.log(name, role, instagram, number);
 
+  // Find the current logged in user and update their information using the form data.
   const result = await prisma.user.update({
     where: {
       id: userId,
     },
     data: {
       name,
+      role,
       instagram,
       number,
     },

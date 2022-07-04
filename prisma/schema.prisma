@@ -44,7 +44,8 @@ model User {
   sessions      Session[]
   instagram     String?
   number        String?
-  team          Team[]
+  role          String?
+  team          Teams[]
 }
 
 model VerificationToken {
@@ -61,7 +62,7 @@ model Campaigns {
   description String?
   location    String?
   date        DateTime?    @db.Date
-  team        Team?
+  team        Teams?
   callsheet   CallSheet?
   wardrobe    Wardrobe[]
   moodboards  Moodboards[]
@@ -69,13 +70,13 @@ model Campaigns {
   SavedLooks  SavedLooks[]
 }
 
-model Team {
+model Teams {
   id          String    @id @default(cuid())
   campaign    Campaigns @relation(fields: [campaignId], references: [id])
   campaignId  String    @unique
   user        User      @relation(fields: [userId], references: [id])
-  userId      String    @unique
-  role        String
+  userId      String
+  role        String?
   permissions String
 }
 
@@ -107,7 +108,7 @@ model Wardrobe {
 model Moodboards {
   id         String    @id @default(cuid())
   campaign   Campaigns @relation(fields: [campaignId], references: [id])
-  campaignId String    @unique
+  campaignId String
   name       String
   images     Images[]
 }

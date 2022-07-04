@@ -2,12 +2,8 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import styles from "@/components/Forms/Form.module.scss";
 import axios from "axios";
-// import { useSession } from "next-auth/react";
 
-export default function AuthNewUser() {
-  // const { data: session, status } = useSession();
-  // console.log(session?.user.id, status);
-
+export default function CreateCampaign() {
   // Initialize next-router
   const router = useRouter();
 
@@ -20,15 +16,16 @@ export default function AuthNewUser() {
   } = useForm();
 
   const submitData = async (values, e) => {
+    console.log(values);
+
     let config = {
       method: "POST",
-      url: `http://localhost:3000/api/profile`,
+      url: `http://localhost:3000/api/campaigns`,
       headers: {
         "Content-Type": "application/json",
       },
       data: values,
     };
-
     try {
       const response = await axios(config);
       console.log(response);
@@ -38,30 +35,16 @@ export default function AuthNewUser() {
     } catch (err) {
       console.log(err);
     }
-
     // Redirect to create campaign page after info has been submitted.
-    router.push("/campaigns/create");
+    router.push("/campaigns");
   };
-
-  //   try {
-  //   const response = await axios.post(
-  //     "http://localhost:3000/api/test",
-  //     values
-  //   );
-  //   console.log(response);
-  //   if (response.data.status == 200) {
-  //     console.log("Success");
-  //   }
-  // } catch (err) {
-  //   console.log(err);
-  // }
 
   return (
     <main className={styles.main}>
       <div className={styles.container}>
         <form
           className={styles.form}
-          id="profile"
+          id="create-campaign"
           method="post"
           onSubmit={handleSubmit(submitData)}
         >
@@ -79,56 +62,50 @@ export default function AuthNewUser() {
             />
           </div>
           <div className={styles.formGroup}>
-            <label className={styles.formGroup__label} htmlFor="role">
-              Role
+            <label className={styles.formGroup__label} htmlFor="description">
+              Description
             </label>
             <input
               className={styles.formGroup__input}
               type="text"
               placeholder="-"
-              maxLength="50"
-              {...register("role", { required: false })}
+              {...register("description", { required: false })}
             />
           </div>
           <div className={styles.formGroup}>
-            <label className={styles.formGroup__label} htmlFor="instagram">
-              Instagram
+            <label className={styles.formGroup__label} htmlFor="location">
+              Location
             </label>
             <input
               className={styles.formGroup__input}
               type="text"
               placeholder="-"
-              maxLength="30"
-              {...register("instagram", { required: false })}
+              {...register("location", { required: false })}
             />
           </div>
           <div className={styles.formGroup}>
-            <label className={styles.formGroup__label} htmlFor="number">
-              Tel
+            <label className={styles.formGroup__label} htmlFor="date">
+              Date
             </label>
             <input
-              className={styles.formGroup__input}
-              type="tel"
-              maxLength="15"
-              // pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
-              placeholder="*"
-              {...register("number", {
-                required: "Enter a valid phone number.",
-                // minLength: {
-                //   value: 10,
-                //   message: "This phone number is too short.",
-                // },
-              })}
+              className={`${styles.formGroup__input}`}
+              type="date"
+              placeholder="-"
+              // tabIndex="-1"
+              {...register("date", { required: false })}
             />
           </div>
         </form>
       </div>
       <div className={styles.form__errors}>
         <p>{errors?.name?.message}</p>
-        <p>{errors?.number?.message}</p>
       </div>
-      <button className={styles.form__button} form="profile" type="submit">
-        Save
+      <button
+        className={styles.form__button}
+        form="create-campaign"
+        type="submit"
+      >
+        Start Creating
       </button>
     </main>
   );
