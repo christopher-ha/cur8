@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import { prisma } from "@/utils/db";
 import { getSession } from "next-auth/react";
 import Header from "@/components/Header/Header";
-import Navigation from "@/components/Blocks/Navigation/Navigation";
 import styles from "@/components/Blocks/Blocks.module.scss";
 import Link from "next/link";
 
@@ -22,9 +21,9 @@ export default function Campaign({ campaigns }) {
             passHref={true}
             key={campaign.id}
           >
-            <a className={styles.block}>
-              <Navigation name={campaign.name} />
-            </a>
+            <div className={styles.block}>
+              <h4 className={styles.block__title}>{campaign.name}</h4>
+            </div>
           </Link>
         ))}
       </div>
