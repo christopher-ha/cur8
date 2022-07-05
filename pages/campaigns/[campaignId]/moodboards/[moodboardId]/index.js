@@ -15,7 +15,7 @@ export default function Images({ images }) {
 
   const pull_data = async (data) => {
     await setNewImages(data);
-    console.log(data);
+    console.log("New Images:", data);
   };
 
   return (

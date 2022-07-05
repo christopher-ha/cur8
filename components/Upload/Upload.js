@@ -11,42 +11,23 @@ export default function UploadImages({ getURLs }) {
 
   useEffect(() => {
     document.onpaste = async function (event) {
-      // use event.originalEvent.clipboard for newer chrome versions
-      var items = (event.clipboardData || event.originalEvent.clipboardData)
-        .items;
-      // find pasted image among pasted items
-      var blob = null;
+      const clipboardData = event.clipboardData || window.clipboardData;
+      const files = Array.from(clipboardData.files);
 
-      for (var i = 0; i < items.length; i++) {
-        if (items[i].type.indexOf("image") === 0) {
-          blob = items[i].getAsFile();
-          console.log(blob);
-          const { url } = await uploadToS3(blob);
-          // console.log(url);
-          submitData(url);
-          setUrls((current) => [...current, url]);
-        }
+      for (const file of files) {
+        // console.log(file);
+        const { url } = await uploadToS3(file);
+        submitData(url);
+        setUrls((current) => [...current, url]);
+        // }
       }
-      // // load image if there is a pasted image
-      // if (blob !== null) {
-      //   var reader = new FileReader();
-      //   reader.onload = function (event) {
-      //     console.log(event.target.result); // data url!
-      //     // var file = new File([blob], "filename");
-      //     // document.getElementById("pastedImage").src = event.target.result;
-      //   };
-      //   reader.readAsDataURL(blob);
-      // }
     };
   }, []);
 
   const handleFilesChange = async ({ target }) => {
     const files = Array.from(target.files);
-    // console.log(files);
-    // console.log(target);
 
-    for (let index = 0; index < files.length; index++) {
-      const file = files[index];
+    for (const file of files) {
       const { url } = await uploadToS3(file);
       // This submitData(url) is telling the function to post to DB via Prisma during the sequence
       submitData(url);
