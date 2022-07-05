@@ -8,7 +8,7 @@ import { prisma } from "@/utils/db";
 export default function Images({ images }) {
   const [newImages, setNewImages] = useState();
 
-  const router = useRouter();
+  // const router = useRouter();
   // const { campaignId, moodboardId } = router.query;
   // console.log(router.query);
   // console.log(images);
@@ -46,13 +46,12 @@ export async function getServerSideProps(context) {
   const { params, req, res } = context;
   const { moodboardId } = params;
 
-  // Find all the campaigns where the user is a part of the team
+  // Get all the images from the current moodboard.
   const imageURLs = await prisma.images.findMany({
     where: {
       moodboardId: moodboardId,
     },
   });
-  await console.log(imageURLs);
 
   return {
     props: {

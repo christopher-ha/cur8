@@ -71,7 +71,6 @@ export default function UploadImages({ getURLs }) {
         onChange={handleFilesChange}
         id="document_attachment_doc"
       />
-      <img id="pastedImage" />
     </div>
   );
 }
