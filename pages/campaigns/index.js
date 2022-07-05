@@ -6,7 +6,7 @@ import styles from "@/components/Blocks/Blocks.module.scss";
 import Link from "next/link";
 
 export default function Campaign({ campaigns }) {
-  console.log(campaigns);
+  // console.log(campaigns);
 
   // const router = useRouter();
   // console.log(router);
