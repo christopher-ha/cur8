@@ -1,0 +1,30 @@
+@use "@/partials/abstracts/mixins" as *;
+@use "@/partials/abstracts/variables" as *;
+
+.upload {
+  &__buttons {
+    display: flex;
+    position: fixed;
+    bottom: 1rem;
+    width: 100%;
+    justify-content: center;
+    // margin-bottom: 1rem;
+  }
+
+  &__picker {
+    display: none;
+  }
+
+  // &__picker::before {
+  //   content: "UPLOAD IMAGE";
+  //   color: $black;
+  //   padding: $p0 $p1;
+  //   border: 0.5px solid $black;
+  //   border-radius: 32px;
+  //   display: inline-block;
+  // }
+
+  &__picker::-webkit-file-upload-button {
+    visibility: hidden;
+  }
+}

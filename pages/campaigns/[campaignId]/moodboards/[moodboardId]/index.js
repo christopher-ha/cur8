@@ -8,11 +8,6 @@ import { prisma } from "@/utils/db";
 export default function Images({ images }) {
   const [newImages, setNewImages] = useState();
 
-  // const router = useRouter();
-  // const { campaignId, moodboardId } = router.query;
-  // console.log(router.query);
-  // console.log(images);
-
   const pull_data = async (data) => {
     await setNewImages(data);
     console.log("New Images:", data);

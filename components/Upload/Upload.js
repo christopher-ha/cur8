@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useS3Upload } from "next-s3-upload";
 import { useRouter } from "next/router";
 import axios from "axios";
+import styles from "@/components/Upload/Upload.module.scss";
 
 export default function UploadImages({ getURLs }) {
   const [urls, setUrls] = useState([]);
@@ -19,7 +20,6 @@ export default function UploadImages({ getURLs }) {
         const { url } = await uploadToS3(file);
         submitData(url);
         setUrls((current) => [...current, url]);
-        // }
       }
     };
   }, []);
@@ -63,14 +63,18 @@ export default function UploadImages({ getURLs }) {
   });
 
   return (
-    <div>
+    <form className={styles.upload__buttons}>
+      <label className="button" htmlFor="file">
+        Upload Image
+      </label>
       <input
+        className={styles.upload__picker}
         type="file"
         name="file"
         multiple={true}
         onChange={handleFilesChange}
-        id="document_attachment_doc"
+        id="file"
       />
-    </div>
+    </form>
   );
 }
