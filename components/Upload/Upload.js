@@ -9,8 +9,41 @@ export default function UploadImages({ getURLs }) {
   const router = useRouter();
   // console.log(router.query);
 
+  useEffect(() => {
+    document.onpaste = async function (event) {
+      // use event.originalEvent.clipboard for newer chrome versions
+      var items = (event.clipboardData || event.originalEvent.clipboardData)
+        .items;
+      // find pasted image among pasted items
+      var blob = null;
+
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") === 0) {
+          blob = items[i].getAsFile();
+          console.log(blob);
+          const { url } = await uploadToS3(blob);
+          // console.log(url);
+          submitData(url);
+          setUrls((current) => [...current, url]);
+        }
+      }
+      // // load image if there is a pasted image
+      // if (blob !== null) {
+      //   var reader = new FileReader();
+      //   reader.onload = function (event) {
+      //     console.log(event.target.result); // data url!
+      //     // var file = new File([blob], "filename");
+      //     // document.getElementById("pastedImage").src = event.target.result;
+      //   };
+      //   reader.readAsDataURL(blob);
+      // }
+    };
+  }, []);
+
   const handleFilesChange = async ({ target }) => {
     const files = Array.from(target.files);
+    // console.log(files);
+    // console.log(target);
 
     for (let index = 0; index < files.length; index++) {
       const file = files[index];
@@ -55,7 +88,9 @@ export default function UploadImages({ getURLs }) {
         name="file"
         multiple={true}
         onChange={handleFilesChange}
+        id="document_attachment_doc"
       />
+      <img id="pastedImage" />
     </div>
   );
 }

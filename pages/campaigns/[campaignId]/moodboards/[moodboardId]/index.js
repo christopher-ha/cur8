@@ -3,6 +3,7 @@ import { useState } from "react";
 import UploadImages from "@/components/Upload/Upload";
 import Header from "@/components/Header/Header";
 import styles from "@/components/Moodboard/Moodboard.module.scss";
+import { prisma } from "@/utils/db";
 
 export default function Images({ images }) {
   const [newImages, setNewImages] = useState();
