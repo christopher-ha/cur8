@@ -20,7 +20,7 @@ export default function CreateCampaign() {
 
     let config = {
       method: "POST",
-      url: `http://localhost:3000/api/campaigns`,
+      url: `/api/campaigns`,
       headers: {
         "Content-Type": "application/json",
       },

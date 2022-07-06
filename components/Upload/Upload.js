@@ -5,13 +5,23 @@ import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import styles from "@/components/Upload/Upload.module.scss";
 
-export default function UploadImages({ getURLs }) {
-  const [urls, setUrls] = useState([]);
+export default function UploadImages({ getContent }) {
+  const [content, setContent] = useState([]);
   const { uploadToS3 } = useS3Upload();
   const router = useRouter();
   // console.log(urls);
 
-  // Replacement for react-dropzone (allows for drag & drop on window instead of a div, and allows for us to click elements that otherwise would exist underneath)
+  // refactor: Take the files and upload to Amazon S3, submit data to database, and setUrls in state.
+  const uploadFiles = async (files) => {
+    for (const file of files) {
+      const { url } = await uploadToS3(file);
+      submitData(url);
+      setContent((current) => [...current, url]);
+    }
+  };
+
+  // Handle drag & drop on browser window (instead of a div)
+  // Replacement for react-dropzone and allows users to click on items that would otherwise be blocked by the react-dropzone.
   const [isDragging, setIsDragging] = useState(false);
   const dragCounter = useRef(0);
   const handleDrag = useCallback((event) => {
@@ -58,34 +68,12 @@ export default function UploadImages({ getURLs }) {
     };
   });
 
-  // refactor: Take the files and upload to Amazon S3, submit data to database, and setUrls in state.
-  const uploadFiles = async (files) => {
-    for (const file of files) {
-      const { url } = await uploadToS3(file);
-      submitData(url);
-      setUrls((current) => [...current, url]);
-    }
-  };
-
-  // // Handle new files via Drag & Drop on browser window
-  // const onDrop = useCallback(async (acceptedFiles) => {
-  //   console.log(acceptedFiles);
-  //   const files = Array.from(acceptedFiles);
-  //   uploadFiles(files);
-  // }, []);
-
-  // // Initialize react-dropzone
-  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
-  //   onDrop,
-  //   noClick: true,
-  // });
-
   // Handle new files/urls via Paste on browser window
   useEffect(() => {
     document.onpaste = async function (event) {
       const clipboardData = event.clipboardData || window.clipboardData;
-      const pastedURL = clipboardData.getData("Text");
-      console.log(pastedURL);
+      const itemPasted = clipboardData.getData("Text");
+      console.log(itemPasted);
       const files = Array.from(clipboardData.files);
       console.log(files);
 
@@ -94,23 +82,24 @@ export default function UploadImages({ getURLs }) {
         return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
       }
 
+      // console.log(checkURL(itemPasted));
+
       // If the user pastes a file, upload it normally.
       if (files) {
         uploadFiles(files);
       }
 
-      if (pastedURL) {
-        submitData(pastedURL);
-        setUrls((current) => [...current, pastedURL]);
+      // If the user pastes an image url, check if it is an image then add it to the database and set state.
+      if (checkURL(itemPasted) === true) {
+        submitData(itemPasted);
+        setContent((current) => [...current, itemPasted]);
+        // Else, it must be a block of text. Add it to database as "text" and set state.
+      } else {
+        setContent((current) => [...current, itemPasted]);
+        submitData("", itemPasted);
       }
 
-      // If the user pastes an image url, check if it is an image. If so, add it to the database.
-      if (checkURL(pastedURL) === true) {
-        submitData(pastedURL);
-        setUrls((current) => [...current, pastedURL]);
-      } else {
-        console.log("Sorry, this link isn't an image");
-      }
+      // console.log("Sorry, this link isn't an image");
     };
   }, []);
 
@@ -121,15 +110,17 @@ export default function UploadImages({ getURLs }) {
     uploadFiles(files);
   };
 
-  const submitData = async (url) => {
+  // Add images to Prisma DB via serverless API
+  const submitData = async (url, text) => {
     let config = {
       method: "POST",
-      url: `http://localhost:3000/api/moodboards/`,
+      url: `/api/moodboards/`,
       headers: {
         "Content-Type": "application/json",
       },
       data: {
         url: url,
+        text: text,
         moodboardId: router.query.moodboardId,
       },
     };
@@ -146,14 +137,11 @@ export default function UploadImages({ getURLs }) {
   // This passes the state containing all NEW image urls from child to parent component via a function prop. Refer to [moodboardId]/index.js -> getURLs function. It takes the urls from the new images and stores it in the newImages state.
   // We map over this data to display the new images underneath. On refresh, this data is gone but by then it will already be in the DB. This skips the step for needing a page refresh.
   useEffect(() => {
-    getURLs(urls);
+    getContent(content);
   });
 
   return (
     <>
-      {/* <div {...getRootProps({ className: styles.upload__dropzone })}>
-        <input {...getInputProps()} />
-      </div> */}
       <form className={styles.upload__buttons}>
         <label className="button" htmlFor="file">
           Upload Image

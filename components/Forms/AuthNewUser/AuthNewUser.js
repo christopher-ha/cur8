@@ -22,7 +22,7 @@ export default function AuthNewUser() {
   const submitData = async (values, e) => {
     let config = {
       method: "POST",
-      url: `http://localhost:3000/api/profile`,
+      url: `/api/profile`,
       headers: {
         "Content-Type": "application/json",
       },

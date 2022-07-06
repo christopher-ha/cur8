@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 import UploadImages from "@/components/Upload/Upload";
@@ -5,39 +6,66 @@ import Header from "@/components/Header/Header";
 import styles from "@/components/Moodboard/Moodboard.module.scss";
 import { prisma } from "@/utils/db";
 
-export default function Images({ images }) {
-  const [newImages, setNewImages] = useState();
+export default function Images({ content }) {
+  const [newContent, setNewContent] = useState();
 
-  const getURLs = async (data) => {
-    await setNewImages(data);
-    console.log("New Images:", data);
+  const getContent = async (data) => {
+    await setNewContent(data);
+    console.log("New Content:", data);
   };
+
+  function checkURL(url) {
+    return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+  }
+
+  console.log(content);
 
   return (
     // <main>
     <main className={styles.moodboard__container}>
       <Header title={"Moodboard"} />
       <div className={styles.moodboard}>
-        {/* <input {...getInputProps()} /> */}
-        {images.map((image) => {
-          return (
-            <img
-              className={styles.moodboard__image}
-              src={image.url}
-              key={image.id}
-            />
-          );
+        {/* Map over the images stored in database */}
+        {content.map((image) => {
+          if (image.url) {
+            return (
+              <img
+                className={styles.moodboard__image}
+                src={image.url}
+                key={image.id}
+                alt={image.text}
+              />
+            );
+          } else {
+            return (
+              <p className={styles.moodboard__text} key={image.id}>
+                {image.text}
+              </p>
+            );
+          }
         })}
-        {newImages?.map((image, index) => {
-          return (
-            <img className={styles.moodboard__image} src={image} key={index} />
-          );
+
+        {/* Map over the new images that user added*/}
+        {newContent?.map((item, index) => {
+          if (checkURL(item) === true) {
+            return (
+              <img
+                className={styles.moodboard__image}
+                src={item}
+                key={index}
+                alt="New Moodboard Image"
+              />
+            );
+          } else {
+            return (
+              <p className={styles.moodboard__text} key={index}>
+                {item}
+              </p>
+            );
+          }
         })}
-        <form className={styles.moodboard__add}>
-          <textarea type="text" />
-        </form>
       </div>
-      <UploadImages getURLs={getURLs} />
+      <UploadImages getContent={getContent} />
     </main>
   );
 }
@@ -47,7 +75,7 @@ export async function getServerSideProps(context) {
   const { moodboardId } = params;
 
   // Get all the images from the current moodboard.
-  const imageURLs = await prisma.images.findMany({
+  const items = await prisma.images.findMany({
     where: {
       moodboardId: moodboardId,
     },
@@ -55,7 +83,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      images: JSON.parse(JSON.stringify(imageURLs)),
+      content: JSON.parse(JSON.stringify(items)),
     },
   };
 }
