@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Head from "next/head";
+import styles from "@/components/Home/Home.module.scss";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -12,8 +13,10 @@ export default function Home() {
         <Head>
           <title>cur8</title>
         </Head>
-        <p>Signed in as {session.user.email}</p>
-        <button onClick={() => signOut()}>Sign Out</button>
+        <main className={styles.container}>
+          {/* <p>Signed in as {session.user.email}</p> */}
+          <button onClick={() => signOut()}>Sign Out</button>
+        </main>
       </>
     );
   }
@@ -22,7 +25,7 @@ export default function Home() {
       <Head>
         <title>cur8</title>
       </Head>
-      <main>
+      <main className={styles.container}>
         <div>
           <Link href="/auth/signup">
             <button>Create an Account</button>

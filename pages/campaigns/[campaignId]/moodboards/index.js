@@ -12,7 +12,7 @@ export default function Moodboards({ moodboards }) {
   return (
     <main>
       <Header title={"Dashboard"} />
-      <div className={styles.container}>
+      <section className={styles.container}>
         {moodboards.map((moodboard) => (
           <Link
             href={`${asPath}/${moodboard.id}`}
@@ -24,7 +24,7 @@ export default function Moodboards({ moodboards }) {
             </div>
           </Link>
         ))}
-      </div>
+      </section>
     </main>
   );
 }

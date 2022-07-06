@@ -1,23 +1,14 @@
 @use "@/partials/abstracts/mixins" as *;
 @use "@/partials/abstracts/variables" as *;
 
-.menu {
+.container {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
   // height: -webkit-fill-available;
 
-  &__item {
-    text-transform: uppercase;
-    padding-top: 0.5rem;
-  }
-
-  &__back {
-    position: absolute;
-    width: 3rem;
-    aspect-ratio: 1/1;
-    margin: 1rem;
+  button {
+    margin-right: 1rem;
   }
 }

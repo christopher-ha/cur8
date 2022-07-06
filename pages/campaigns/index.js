@@ -14,7 +14,7 @@ export default function Campaign({ campaigns }) {
   return (
     <main>
       <Header title={"Dashboard"} />
-      <div className={styles.container}>
+      <section className={styles.container}>
         {campaigns.map((campaign) => (
           <Link
             href={"/campaigns/" + campaign.id}
@@ -26,7 +26,7 @@ export default function Campaign({ campaigns }) {
             </div>
           </Link>
         ))}
-      </div>
+      </section>
     </main>
   );
 }

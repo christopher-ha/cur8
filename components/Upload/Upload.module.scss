@@ -31,6 +31,7 @@
   &__dropzone {
     position: fixed;
     height: 100vh;
+    // height: -webkit-fill-available;
     width: 100vw;
     top: 0;
     // background-color: rgba($color: #ff0000, $alpha: 0.1);
