@@ -9,7 +9,7 @@ export default function NewUser() {
         <title>Profile</title>
       </Head>
       <Header title={"Profile"} logoVisible={false} />
-      <AuthNewUser />;
+      <AuthNewUser />
     </>
   );
 }

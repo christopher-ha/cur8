@@ -8,9 +8,9 @@ const modalStyle = {
   overlay: {},
   content: {
     display: "flex",
-    "justify-content": "center",
-    "align-items": "center",
-    "flex-direction": "column",
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "column",
     position: "absolute",
     top: "0px",
     left: "0px",
@@ -32,19 +32,18 @@ export default function Header({ title, campaign, logoVisible }) {
   function openModal() {
     setIsOpen(true);
   }
-
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
   }
-
   function closeModal() {
     setIsOpen(false);
   }
 
   return (
     <div className={styles.header}>
-      <Link href="/">
+      <Link href="/campaigns">
         <h3
+          href=""
           className={`${styles.header__logo} ${
             logoVisible === false ? `${styles.hidden}` : ""
           }`}
@@ -72,7 +71,7 @@ export default function Header({ title, campaign, logoVisible }) {
         contentLabel="Hamburger Menu"
       >
         <Menu />
-        <button onClick={closeModal}>close</button>
+        <button onClick={closeModal}>Close</button>
       </Modal>
     </div>
   );

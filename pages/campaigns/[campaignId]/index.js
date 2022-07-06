@@ -13,7 +13,7 @@ export default function Campaign() {
         alt="Back Arrow"
         onClick={() => router.back()}
       ></img>
-      <Menu dashboardVisible={false} />
+      <Menu />
       {/* <p>This is a single campaign. Here is the ID: {campaignId}</p>
         <p>
           This will probably be the menu where people can go to all different

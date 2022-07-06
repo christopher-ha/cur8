@@ -11,7 +11,7 @@ export default function Moodboards({ moodboards }) {
   // console.log(moodboards);
   return (
     <main>
-      <Header title={"Dashboard"} />
+      <Header title={"Moodboards"} />
       <section className={styles.container}>
         {moodboards.map((moodboard) => (
           <Link

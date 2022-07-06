@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useS3Upload } from "next-s3-upload";
 import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
@@ -9,7 +9,54 @@ export default function UploadImages({ getURLs }) {
   const [urls, setUrls] = useState([]);
   const { uploadToS3 } = useS3Upload();
   const router = useRouter();
-  console.log(urls);
+  // console.log(urls);
+
+  // Replacement for react-dropzone (allows for drag & drop on window instead of a div, and allows for us to click elements that otherwise would exist underneath)
+  const [isDragging, setIsDragging] = useState(false);
+  const dragCounter = useRef(0);
+  const handleDrag = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+  }, []);
+  const handleDragIn = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dragCounter.current++;
+    if (event.dataTransfer.items && event.dataTransfer.items.length > 0) {
+      setIsDragging(true);
+    }
+  }, []);
+  const handleDragOut = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current > 0) return;
+    setIsDragging(false);
+  }, []);
+  const handleDrop = useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(false);
+    if (event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+      dragCounter.current = 0;
+      console.log(event.dataTransfer.files);
+      const files = event.dataTransfer.files;
+      // This is where we upload the files using our function.
+      uploadFiles(files);
+    }
+  }, []);
+  useEffect(() => {
+    window.addEventListener("dragenter", handleDragIn);
+    window.addEventListener("dragleave", handleDragOut);
+    window.addEventListener("dragover", handleDrag);
+    window.addEventListener("drop", handleDrop);
+    return function cleanUp() {
+      window.removeEventListener("dragenter", handleDragIn);
+      window.removeEventListener("dragleave", handleDragOut);
+      window.removeEventListener("dragover", handleDrag);
+      window.removeEventListener("drop", handleDrop);
+    };
+  });
 
   // refactor: Take the files and upload to Amazon S3, submit data to database, and setUrls in state.
   const uploadFiles = async (files) => {
@@ -20,18 +67,18 @@ export default function UploadImages({ getURLs }) {
     }
   };
 
-  // Handle new files via Drag & Drop on browser window
-  const onDrop = useCallback(async (acceptedFiles) => {
-    console.log(acceptedFiles);
-    const files = Array.from(acceptedFiles);
-    uploadFiles(files);
-  }, []);
+  // // Handle new files via Drag & Drop on browser window
+  // const onDrop = useCallback(async (acceptedFiles) => {
+  //   console.log(acceptedFiles);
+  //   const files = Array.from(acceptedFiles);
+  //   uploadFiles(files);
+  // }, []);
 
-  // Initialize react-dropzone
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    noClick: true,
-  });
+  // // Initialize react-dropzone
+  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  //   onDrop,
+  //   noClick: true,
+  // });
 
   // Handle new files/urls via Paste on browser window
   useEffect(() => {
@@ -104,9 +151,9 @@ export default function UploadImages({ getURLs }) {
 
   return (
     <>
-      <div {...getRootProps({ className: styles.upload__dropzone })}>
+      {/* <div {...getRootProps({ className: styles.upload__dropzone })}>
         <input {...getInputProps()} />
-      </div>
+      </div> */}
       <form className={styles.upload__buttons}>
         <label className="button" htmlFor="file">
           Upload Image

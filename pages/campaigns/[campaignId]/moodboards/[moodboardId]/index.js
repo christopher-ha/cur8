@@ -33,6 +33,9 @@ export default function Images({ images }) {
             <img className={styles.moodboard__image} src={image} key={index} />
           );
         })}
+        <form className={styles.moodboard__add}>
+          <textarea type="text" />
+        </form>
       </div>
       <UploadImages getURLs={getURLs} />
     </main>
