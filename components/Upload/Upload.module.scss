@@ -30,10 +30,10 @@
 
   &__dropzone {
     position: fixed;
-    height: 100vh;
+    height: 94vh;
     // height: -webkit-fill-available;
     width: 100vw;
-    top: 0;
+    bottom: 0;
     // background-color: rgba($color: #ff0000, $alpha: 0.1);
   }
 }
