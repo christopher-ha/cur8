@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useS3Upload } from "next-s3-upload";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { useDropzone } from "react-dropzone";
 import styles from "@/components/Upload/Upload.module.scss";
 
 export default function UploadImages({ getURLs }) {
@@ -9,6 +10,23 @@ export default function UploadImages({ getURLs }) {
   const { uploadToS3 } = useS3Upload();
   const router = useRouter();
   // console.log(router.query);
+
+  const onDrop = useCallback(async (acceptedFiles) => {
+    console.log(acceptedFiles);
+    const files = Array.from(acceptedFiles);
+
+    for (const file of files) {
+      console.log(file);
+      const { url } = await uploadToS3(file);
+      submitData(url);
+      setUrls((current) => [...current, url]);
+    }
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    noClick: true,
+  });
 
   useEffect(() => {
     document.onpaste = async function (event) {
@@ -63,18 +81,24 @@ export default function UploadImages({ getURLs }) {
   });
 
   return (
-    <form className={styles.upload__buttons}>
-      <label className="button" htmlFor="file">
-        Upload Image
-      </label>
-      <input
-        className={styles.upload__picker}
-        type="file"
-        name="file"
-        multiple={true}
-        onChange={handleFilesChange}
-        id="file"
-      />
-    </form>
+    <>
+      <div {...getRootProps({ className: styles.upload__dropzone })}>
+        <input {...getInputProps()} />
+      </div>
+      <form className={styles.upload__buttons}>
+        <label className="button" htmlFor="file">
+          Upload Image
+        </label>
+        <input
+          className={styles.upload__picker}
+          type="file"
+          name="file"
+          multiple={true}
+          onChange={handleFilesChange}
+          id="file"
+          accept="image/jpeg, image/jpg, image/png"
+        />
+      </form>
+    </>
   );
 }

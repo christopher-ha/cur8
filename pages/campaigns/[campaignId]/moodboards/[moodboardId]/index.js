@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import UploadImages from "@/components/Upload/Upload";
 import Header from "@/components/Header/Header";
 import styles from "@/components/Moodboard/Moodboard.module.scss";
 import { prisma } from "@/utils/db";
+import { useDropzone } from "react-dropzone";
 
 export default function Images({ images }) {
   const [newImages, setNewImages] = useState();
@@ -13,10 +14,30 @@ export default function Images({ images }) {
     console.log("New Images:", data);
   };
 
+  // // const onDrop = useCallback(async (acceptedFiles) => {
+  // //   let passUpload = (acceptedFiles) => {};
+  // //   // console.log(acceptedFiles);
+  // //   // const files = Array.from(acceptedFiles);
+
+  // //   // for (const file of files) {
+  // //   //   // console.log(file);
+  // //   //   const { url } = await uploadToS3(file);
+  // //   //   submitData(url);
+  // //   //   setUrls((current) => [...current, url]);
+  // //   // }
+  // // }, []);
+
+  // const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  //   onDrop,
+  //   noClick: true,
+  // });
+
   return (
-    <main>
+    // <main>
+    <main className={styles.moodboard__container}>
       <Header title={"Moodboard"} />
       <div className={styles.moodboard}>
+        {/* <input {...getInputProps()} /> */}
         {images.map((image) => {
           return (
             <img
