@@ -84,24 +84,6 @@ export default function UploadImages({ getContent }) {
 
       console.log(checkURL(itemPasted));
 
-      // // If the user pastes a file, upload it normally.
-      // if (files !== undefined && checkURL(itemPasted) === false) {
-      //   uploadFiles(files);
-      //   console.log("1");
-      // }
-      // // If the user pastes an image url, check if it is an image then add it to the database and set state.
-      // else if (checkURL(itemPasted) === true) {
-      //   submitData(itemPasted);
-      //   setContent((current) => [...current, itemPasted]);
-      //   console.log("2");
-      // }
-      // // Else, it must be a block of text. Add it to database as "text" and set state.
-      // else if (checkURL(itemPasted) === false) {
-      //   console.log("3");
-      //   submitData("", itemPasted);
-      //   setContent((current) => [...current, itemPasted]);
-      // }
-
       // image copy
       // files: [obj...]
       // url? false
@@ -125,13 +107,10 @@ export default function UploadImages({ getContent }) {
         submitData("", itemPasted);
       }
       // If the files array is empty and it's an image url, add to db as "url" and setContent to render on page
-      // If else statements check if all possible chained conditions can be met, so that's why we don't need to specify checkURL(itemPasted == false) above.
       else if (files.length === 0 && checkURL(itemPasted) === true) {
         setContent((current) => [...current, itemPasted]);
         submitData(itemPasted);
       }
-
-      // console.log("Sorry, this link isn't an image");
     };
   }, []);
 
