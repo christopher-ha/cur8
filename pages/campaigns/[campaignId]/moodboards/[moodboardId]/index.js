@@ -5,6 +5,7 @@ import UploadImages from "@/components/Upload/Upload";
 import Header from "@/components/Header/Header";
 import styles from "@/components/Moodboard/Moodboard.module.scss";
 import { prisma } from "@/utils/db";
+import Head from "next/head";
 
 export default function Images({ content }) {
   const [newContent, setNewContent] = useState();
@@ -23,6 +24,9 @@ export default function Images({ content }) {
   return (
     // <main>
     <main className={styles.moodboard__container}>
+      <Head>
+        <title>Moodboard</title>
+      </Head>
       <Header title={"Moodboard"} />
       <div className={styles.moodboard}>
         {/* Map over the images stored in database */}

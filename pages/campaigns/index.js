@@ -4,6 +4,7 @@ import { getSession } from "next-auth/react";
 import Header from "@/components/Header/Header";
 import styles from "@/components/Blocks/Blocks.module.scss";
 import Link from "next/link";
+import Head from "next/head";
 
 export default function Campaign({ campaigns }) {
   // console.log(campaigns);
@@ -13,6 +14,9 @@ export default function Campaign({ campaigns }) {
   // const campaignId = router.query.campaignId;
   return (
     <main>
+      <Head>
+        <title>Dashboard</title>
+      </Head>
       <Header title={"Dashboard"} />
       <section className={styles.container}>
         {campaigns.map((campaign) => (

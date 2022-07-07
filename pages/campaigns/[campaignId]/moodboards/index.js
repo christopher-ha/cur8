@@ -4,6 +4,7 @@ import { getSession } from "next-auth/react";
 import Header from "@/components/Header/Header";
 import styles from "@/components/Blocks/Blocks.module.scss";
 import Link from "next/link";
+import Head from "next/head";
 
 export default function Moodboards({ moodboards }) {
   const { asPath } = useRouter();
@@ -11,6 +12,9 @@ export default function Moodboards({ moodboards }) {
   // console.log(moodboards);
   return (
     <main>
+      <Head>
+        <title>Moodboards</title>
+      </Head>
       <Header title={"Moodboards"} />
       <section className={styles.container}>
         {moodboards.map((moodboard) => (
