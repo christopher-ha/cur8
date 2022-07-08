@@ -1,0 +1,15 @@
+@use "@/partials/abstracts/mixins" as *;
+@use "@/partials/abstracts/variables" as *;
+
+.verify {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: 100vh;
+
+  &__mail {
+    color: $black;
+    text-decoration: underline;
+  }
+}

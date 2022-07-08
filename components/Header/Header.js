@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import styles from "@/components/Header/Header.module.scss";
 import Link from "next/link";
 import Modal from "react-modal";
@@ -26,7 +27,7 @@ const modalStyle = {
 
 Modal.setAppElement("#__next");
 
-export default function Header({ title, campaign, logoVisible }) {
+export default function Header({ title, campaign, logoVisible, menuVisible }) {
   const [modalIsOpen, setIsOpen] = useState(false);
 
   function openModal() {
@@ -56,7 +57,9 @@ export default function Header({ title, campaign, logoVisible }) {
       <h3 className={styles.header__menu}>MENU</h3>
       <div className={styles.header__menu__container}>
         <img
-          className={styles.header__menu__mobile}
+          className={`${styles.header__menu__mobile} ${
+            menuVisible === false ? styles.hidden : ""
+          }`}
           src="/icons/hamburger-menu.svg"
           alt="Hamburger Menu"
           onClick={openModal}

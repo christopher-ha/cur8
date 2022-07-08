@@ -16,7 +16,7 @@ export default function Images({ content }) {
   };
 
   function checkURL(url) {
-    return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+    return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
   }
 
   console.log(content);

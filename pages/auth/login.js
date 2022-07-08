@@ -9,7 +9,12 @@ export default function SignIn({ csrfToken }) {
       <Head>
         <title>Log In</title>
       </Head>
-      <Header title={"Log In"} campaign={"Test"} logoVisible={false} />
+      <Header
+        title={"Log In"}
+        campaign={"Test"}
+        logoVisible={false}
+        menuVisible={false}
+      />
       <AuthForm csrfToken={csrfToken} buttonText={"LOG IN WITH EMAIL"} />
     </>
   );

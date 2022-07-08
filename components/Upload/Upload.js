@@ -72,17 +72,18 @@ export default function UploadImages({ getContent }) {
   useEffect(() => {
     document.onpaste = async function (event) {
       const clipboardData = event.clipboardData || window.clipboardData;
-      const itemPasted = clipboardData.getData("Text");
-      console.log("item pasted", itemPasted);
+      // Gets text (image urls, text)
+      const text = clipboardData.getData("Text");
+      console.log("Text:", text);
+      // Gets image files
       const files = Array.from(clipboardData.files);
-      console.log("files", files);
+      console.log("Files:", files);
 
       // Checks if URL is an image.
       function checkURL(url) {
         return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
       }
-
-      console.log(checkURL(itemPasted));
+      console.log(checkURL(text));
 
       // image copy
       // files: [obj...]
@@ -102,22 +103,75 @@ export default function UploadImages({ getContent }) {
       }
       // If the files array is empty and it's not an image url, add to db as "text" and setContent to render on page.
       else if (files.length === 0) {
-        // else if (files.length === 0 && checkURL(itemPasted) === false) {
-        setContent((current) => [...current, itemPasted]);
-        submitData("", itemPasted);
+        // else if (files.length === 0 && checkURL(text) === false) {
+        setContent((current) => [...current, text]);
+        submitData("", text);
       }
       // If the files array is empty and it's an image url, add to db as "url" and setContent to render on page
-      else if (files.length === 0 && checkURL(itemPasted) === true) {
-        setContent((current) => [...current, itemPasted]);
-        submitData(itemPasted);
+      else if (files.length === 0 && checkURL(text) === true) {
+        setContent((current) => [...current, text]);
+        submitData(text);
       }
     };
   }, []);
 
+  // Handle text or image urls via the "Paste Text" button
+  const pasteText = async (event) => {
+    event.preventDefault();
+    // Read the clipboard contents
+    const clipboardContents = await navigator.clipboard.read();
+
+    // For each item in the clipboard,
+    for (const item of clipboardContents) {
+      // If the type of the item is plain text, check if its an image url or regular text.
+      if (clipboardContents[0].types.includes("text/plain")) {
+        console.log("1");
+        // Grab the text, do something with it:
+        navigator.clipboard.readText().then((text) => {
+          // Checks if URL is an image.
+          function checkURL(url) {
+            return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(
+              url
+            );
+          }
+
+          // If the text is NOT an image url, upload it to DB as "text"
+          if (checkURL(text) === false) {
+            // else if (files.length === 0 && checkURL(text) === false) {
+            setContent((current) => [...current, text]);
+            submitData("", text);
+          }
+          // If the text is an image url, upload it to DB as "url"
+          else if (checkURL(text) === true) {
+            setContent((current) => [...current, text]);
+            submitData(text);
+          }
+        });
+      }
+      // If the type of the item pasted is an image, convert the blob into a file and upload it. We put push it to an array because the uploadFiles() function only takes an array of files.
+      else if (
+        clipboardContents[0].types.includes(
+          "image/png" || "image.jpg" || "image/jpeg"
+        )
+      ) {
+        console.log("2");
+        let files = [];
+        const blob = await item.getType(
+          "image/png" || "image/jpg" || "image/jpeg"
+        );
+        console.log(blob);
+        const file = new File([blob], `image_${Date.now()}.jpeg`, {
+          type: "image/jpeg",
+        });
+        files.push(file);
+        uploadFiles(files);
+      }
+    }
+  };
+
   // Handle new files via Upload Picker
   const handleFilesChange = async ({ target }) => {
     const files = Array.from(target.files);
-
     uploadFiles(files);
   };
 
@@ -154,6 +208,9 @@ export default function UploadImages({ getContent }) {
   return (
     <>
       <form className={styles.upload__buttons}>
+        <button className={styles.upload__paste} onClick={pasteText}>
+          Paste
+        </button>
         <label className="button" htmlFor="file">
           Upload Image
         </label>

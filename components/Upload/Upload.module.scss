@@ -19,6 +19,10 @@
     visibility: hidden;
   }
 
+  &__paste {
+    margin-right: 0.5rem;
+  }
+
   &__dropzone {
     position: fixed;
     height: 94vh;
