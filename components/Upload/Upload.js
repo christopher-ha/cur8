@@ -9,9 +9,36 @@ export default function UploadImages({ getContent }) {
   const [content, setContent] = useState([]);
   const { uploadToS3 } = useS3Upload();
   const router = useRouter();
-  // console.log(urls);
 
-  // refactor: Take the files and upload to Amazon S3, submit data to database, and setUrls in state.
+  // Add images to Prisma DB via serverless API
+  const submitData = async (url, text) => {
+    let config = {
+      method: "POST",
+      url: `/api/moodboards/`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        url: url,
+        text: text,
+        moodboardId: router.query.moodboardId,
+      },
+    };
+    try {
+      const response = await axios(config);
+      if (response.data.status == 200) {
+        console.log("Success");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  // This passes the state containing all NEW image urls from child to parent component via a function prop. Refer to [moodboardId]/index.js -> getURLs function. It takes the urls from the new images and stores it in the newImages state.
+  // We map over this data to display the new images underneath. On refresh, this data is gone but by then it will already be in the DB. This skips the step for needing a page refresh.
+  useEffect(() => {
+    getContent(content);
+  });
+  // Takes the files and upload to Amazon S3, submit data to database, and setUrls in state.
   const uploadFiles = async (files) => {
     for (const file of files) {
       const { url } = await uploadToS3(file);
@@ -68,7 +95,7 @@ export default function UploadImages({ getContent }) {
     };
   });
 
-  // Handle new files/urls via Paste on browser window
+  // Handle new files/text/urls via Paste on browser window
   useEffect(() => {
     document.onpaste = async function (event) {
       const clipboardData = event.clipboardData || window.clipboardData;
@@ -115,57 +142,70 @@ export default function UploadImages({ getContent }) {
     };
   }, []);
 
-  // Handle text or image urls via the "Paste Text" button
+  // Handle text/urls via the "Paste Text" button
   const pasteText = async (event) => {
     event.preventDefault();
+    const clipboardTest = event.clipboardData;
+    console.log("Clipboard API:", clipboardTest);
     // Read the clipboard contents
-    const clipboardContents = await navigator.clipboard.read();
+    const clipboardContents = await navigator.clipboard.read().catch((e) => {
+      return console.error(e);
+    });
 
-    // For each item in the clipboard,
-    for (const item of clipboardContents) {
-      // If the type of the item is plain text, check if its an image url or regular text.
-      if (clipboardContents[0].types.includes("text/plain")) {
-        console.log("1");
-        // Grab the text, do something with it:
-        navigator.clipboard.readText().then((text) => {
-          // Checks if URL is an image.
-          function checkURL(url) {
-            return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(
-              url
-            );
-          }
+    if (clipboardContents) {
+      // For each item in the clipboard,
+      for (const item of clipboardContents) {
+        // If the type of the item is plain text, check if its an image url or regular text.
+        if (clipboardContents[0].types.includes("text/plain")) {
+          // Grab the text, do something with it:
+          navigator.clipboard.readText().then((text) => {
+            // Checks if URL is an image.
+            function checkURL(url) {
+              return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(
+                url
+              );
+            }
 
-          // If the text is NOT an image url, upload it to DB as "text"
-          if (checkURL(text) === false) {
-            // else if (files.length === 0 && checkURL(text) === false) {
-            setContent((current) => [...current, text]);
-            submitData("", text);
-          }
-          // If the text is an image url, upload it to DB as "url"
-          else if (checkURL(text) === true) {
-            setContent((current) => [...current, text]);
-            submitData(text);
-          }
-        });
+            // If the text is NOT an image url, upload it to DB as "text"
+            if (checkURL(text) === false) {
+              // else if (files.length === 0 && checkURL(text) === false) {
+              setContent((current) => [...current, text]);
+              submitData("", text);
+            }
+            // If the text is an image url, upload it to DB as "url"
+            else if (checkURL(text) === true) {
+              setContent((current) => [...current, text]);
+              submitData(text);
+            }
+          });
+        }
+        // If the type of the item pasted is an image, convert the blob into a file and upload it.
+        else if (
+          clipboardContents[0].types.includes(
+            "image/png" || "image.jpg" || "image/jpeg"
+          )
+        ) {
+          // We put push it to an array because the uploadFiles() function only takes an array of files.
+          let files = [];
+          const blob = await item.getType(
+            "image/png" || "image/jpg" || "image/jpeg"
+          );
+          console.log(blob);
+          // Create a new file from the blob with the date attached to the name to keep it unique.
+          const file = new File([blob], `image_${Date.now()}.jpeg`, {
+            type: "image/jpeg",
+          });
+          // Push the file to the array that was declared earlier.
+          files.push(file);
+          // Run upload function with those files.
+          uploadFiles(files);
+        }
       }
-      // If the type of the item pasted is an image, convert the blob into a file and upload it. We put push it to an array because the uploadFiles() function only takes an array of files.
-      else if (
-        clipboardContents[0].types.includes(
-          "image/png" || "image.jpg" || "image/jpeg"
-        )
-      ) {
-        console.log("2");
-        let files = [];
-        const blob = await item.getType(
-          "image/png" || "image/jpg" || "image/jpeg"
-        );
-        console.log(blob);
-        const file = new File([blob], `image_${Date.now()}.jpeg`, {
-          type: "image/jpeg",
-        });
-        files.push(file);
-        uploadFiles(files);
-      }
+    } else {
+      console.error(
+        "It looks like you’re trying to paste an image from your device. Due to security features, this isn't enabled for this button :( Use the upload image button or paste on the window instead!"
+      );
+      // here conditionally render a component that tells the user to paste using a different method.
     }
   };
 
@@ -174,36 +214,6 @@ export default function UploadImages({ getContent }) {
     const files = Array.from(target.files);
     uploadFiles(files);
   };
-
-  // Add images to Prisma DB via serverless API
-  const submitData = async (url, text) => {
-    let config = {
-      method: "POST",
-      url: `/api/moodboards/`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: {
-        url: url,
-        text: text,
-        moodboardId: router.query.moodboardId,
-      },
-    };
-    try {
-      const response = await axios(config);
-      if (response.data.status == 200) {
-        console.log("Success");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // This passes the state containing all NEW image urls from child to parent component via a function prop. Refer to [moodboardId]/index.js -> getURLs function. It takes the urls from the new images and stores it in the newImages state.
-  // We map over this data to display the new images underneath. On refresh, this data is gone but by then it will already be in the DB. This skips the step for needing a page refresh.
-  useEffect(() => {
-    getContent(content);
-  });
 
   return (
     <>
