@@ -9,15 +9,24 @@ import Head from "next/head";
 
 export default function Images({ content }) {
   const [newContent, setNewContent] = useState();
+  const [selected, setSelected] = useState();
+  const [isActive, setActive] = useState(false);
 
   const getContent = async (data) => {
     await setNewContent(data);
     console.log("New Content:", data);
   };
 
-  function checkURL(url) {
+  const checkURL = (url) => {
     return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
-  }
+  };
+
+  const showOptions = (id) => {
+    // We pass id of the image into the selected state.
+    setSelected(id);
+    // Then toggle to the opposite of it's current state (false -> true)
+    setActive(!isActive);
+  };
 
   console.log(content);
 
@@ -28,17 +37,31 @@ export default function Images({ content }) {
         <title>Moodboard</title>
       </Head>
       <Header title={"Moodboard"} />
+      <p>{selected}</p>
       <div className={styles.moodboard}>
         {/* Map over the images stored in database */}
         {content.map((image) => {
           if (image.url) {
             return (
-              <img
-                className={styles.moodboard__image}
-                src={image.url}
-                key={image.id}
-                alt={image.text}
-              />
+              <div key={image.id}>
+                <img
+                  className={styles.moodboard__image}
+                  src={image.url}
+                  alt={image.text}
+                  onClick={() => {
+                    showOptions(image.id);
+                  }}
+                />
+                {/* We set the state of selected onClick, so when we click one and it triggers a match to the image id, show the options. Only if the toggle is set to true, then we show options. Without this toggle, the edit buttons will always be there and have no state that breaks the condition. */}
+                {selected === image.id && isActive === true ? (
+                  <div className={styles.moodboard__image__options}>
+                    <h4 className={styles.moodboard__image__option}>Edit</h4>
+                    <h4 className={styles.moodboard__image__option}>Delete</h4>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
             );
           } else {
             return (
