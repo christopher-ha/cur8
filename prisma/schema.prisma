@@ -72,7 +72,7 @@ model Campaigns {
 
 model Teams {
   id          String    @id @default(cuid())
-  campaign    Campaigns @relation(fields: [campaignId], references: [id])
+  campaign    Campaigns @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId  String    @unique
   user        User      @relation(fields: [userId], references: [id])
   userId      String
@@ -82,7 +82,7 @@ model Teams {
 
 model CallSheet {
   id         String    @id @default(cuid())
-  campaign   Campaigns @relation(fields: [campaignId], references: [id])
+  campaign   Campaigns @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId String    @unique
   time       DateTime  @db.Time
   task       String
@@ -91,7 +91,7 @@ model CallSheet {
 
 model Wardrobe {
   id                    String       @id @default(cuid())
-  campaign              Campaigns    @relation(fields: [campaignId], references: [id])
+  campaign              Campaigns    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId            String
   url                   String
   brand                 String
@@ -107,7 +107,7 @@ model Wardrobe {
 
 model Moodboards {
   id         String    @id @default(cuid())
-  campaign   Campaigns @relation(fields: [campaignId], references: [id])
+  campaign   Campaigns @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId String
   name       String
   images     Images[]
@@ -115,7 +115,7 @@ model Moodboards {
 
 model Images {
   id          String     @id @default(cuid())
-  moodboards  Moodboards @relation(fields: [moodboardId], references: [id])
+  moodboards  Moodboards @relation(fields: [moodboardId], references: [id], onDelete: Cascade)
   moodboardId String
   url         String?
   text        String?
@@ -123,7 +123,7 @@ model Images {
 
 model Models {
   id         String       @id @default(cuid())
-  campaign   Campaigns    @relation(fields: [campaignId], references: [id])
+  campaign   Campaigns    @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId String
   name       String
   urlFace    String
@@ -136,7 +136,7 @@ model Models {
 
 model SavedLooks {
   id           String    @id @default(cuid())
-  campaign     Campaigns @relation(fields: [campaignId], references: [id])
+  campaign     Campaigns @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId   String
   models       Models    @relation(fields: [modelId], references: [id])
   modelId      String

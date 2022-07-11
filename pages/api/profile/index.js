@@ -2,36 +2,34 @@ import { prisma } from "@/utils/db";
 import { getSession } from "next-auth/react";
 
 export default async function handle(req, res) {
-  const session = await getSession({
-    req,
-  });
-  const userId = session.user.id;
+  if (req.method === "POST") {
+    return await createProfile(req, res);
+  }
+}
 
-  const { name, role, instagram, number } = req.body;
+async function createProfile(req, res) {
+  const { name, role, instagram, number } = req.body.formData;
   console.log(name, role, instagram, number);
 
-  // Find the current logged in user and update their information using the form data.
-  const result = await prisma.user.update({
-    where: {
-      id: userId,
-    },
-    data: {
-      name,
-      role,
-      instagram,
-      number,
-    },
-  });
-  res.json(result);
+  try {
+    const session = await getSession({ req });
+    const userId = session.user.id;
 
-  // if (!session) {
-  //   res.status(401).json({
-  //     error: "Unauthenticated user",
-  //   });
-  // } else {
-  //   res.status(200).json({
-  //     message: "Success",
-  //     userId,
-  //   });
-  // }
+    // Find the current logged in user and update their information using the form data.
+    const createProfile = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name,
+        role,
+        instagram,
+        number,
+      },
+    });
+    return res.status(200).json(createProfile, { success: true });
+  } catch (error) {
+    console.error("Request error", error);
+    res.status(500).json({ error: "Error creating profile", success: false });
+  }
 }

@@ -19,42 +19,21 @@ export default function AuthNewUser() {
     reset,
   } = useForm();
 
-  const submitData = async (values, e) => {
-    let config = {
-      method: "POST",
-      url: `/api/profile`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: values,
-    };
-
-    try {
-      const response = await axios(config);
-      console.log(response);
-      if (response.data.status == 200) {
-        console.log("Success");
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  const submitData = async (formData, e) => {
+    axios
+      .post("/api/profile", {
+        formData,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     // Redirect to create campaign page after info has been submitted.
     router.push("/campaigns/create");
   };
-
-  //   try {
-  //   const response = await axios.post(
-  //     "http://localhost:3000/api/test",
-  //     values
-  //   );
-  //   console.log(response);
-  //   if (response.data.status == 200) {
-  //     console.log("Success");
-  //   }
-  // } catch (err) {
-  //   console.log(err);
-  // }
 
   return (
     <main className={styles.main}>

@@ -1,21 +1,43 @@
 import { prisma } from "@/utils/db";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 
-export default async function Handle(req, res) {
+export default async function handler(req, res) {
+  if (req.method === "POST") {
+    return await createItem(req, res);
+  } else if (req.method === "DELETE") {
+    return await deleteItem(req, res);
+  }
+}
+
+async function createItem(req, res) {
   const { url, text, moodboardId } = req.body;
-  // console.log(url, text, moodboardId);
-  console.log("url", url);
-  console.log("text", text);
-  console.log("moodboardId", moodboardId);
 
-  const images = await prisma.images.create({
-    data: {
-      moodboardId: moodboardId,
-      url: url,
-      text: text,
-    },
-  });
+  try {
+    const createItem = await prisma.images.create({
+      data: {
+        moodboardId: moodboardId,
+        url: url,
+        text: text,
+      },
+    });
+    return res.status(200).json(createItem, { success: true });
+  } catch (error) {
+    console.error("Request error", error);
+    res.status(500).json({ error: "Error creating item", success: false });
+  }
+}
 
-  res.json({ images });
+async function deleteItem(req, res) {
+  const { selected } = req.body;
+
+  try {
+    const deleteItem = await prisma.images.delete({
+      where: {
+        id: selected,
+      },
+    });
+    return res.status(200).json(deleteItem, { success: true });
+  } catch (error) {
+    console.error("Request error", error);
+    res.status(500).json({ error: "Error deleting item", success: false });
+  }
 }

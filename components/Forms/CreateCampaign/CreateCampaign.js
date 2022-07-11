@@ -15,28 +15,20 @@ export default function CreateCampaign() {
     reset,
   } = useForm();
 
-  const submitData = async (values, e) => {
-    console.log(values);
-
-    let config = {
-      method: "POST",
-      url: `/api/campaigns`,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: values,
-    };
-    try {
-      const response = await axios(config);
-      console.log(response);
-      if (response.data.status == 200) {
-        console.log("Success");
-      }
-    } catch (err) {
-      console.log(err);
-    }
-    // Redirect to create campaign page after info has been submitted.
-    router.push("/campaigns");
+  const submitData = async (formData, e) => {
+    console.log(formData);
+    axios
+      .post("/api/campaigns", {
+        formData,
+      })
+      .then((response) => {
+        console.log(response);
+        // Redirect to create campaign page after info has been submitted.
+        router.push("/campaigns");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
