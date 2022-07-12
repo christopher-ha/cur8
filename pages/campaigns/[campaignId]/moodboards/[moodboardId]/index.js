@@ -10,7 +10,6 @@ import axios from "axios";
 
 export default function Images({ content }) {
   const router = useRouter();
-  // const [newContent, setNewContent] = useState();
   const [selected, setSelected] = useState();
   const [isActive, setActive] = useState(false);
 
@@ -20,15 +19,6 @@ export default function Images({ content }) {
     setSelected("");
     setActive(false);
   };
-
-  // const getContent = async (data) => {
-  //   await setNewContent(data);
-  //   console.log("New Content:", data);
-  // };
-
-  // const checkURL = (url) => {
-  //   return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
-  // };
 
   const showOptions = (id) => {
     // We pass id of the image into the selected state.
@@ -49,16 +39,14 @@ export default function Images({ content }) {
     }
   };
 
-  console.log(content);
+  // console.log(content);
 
   return (
-    // <main>
     <main className={styles.moodboard__container}>
       <Head>
         <title>Moodboard</title>
       </Head>
       <Header title={"Moodboard"} />
-      <p>{selected}</p>
       <div className={styles.moodboard}>
         {/* Map over the images stored in database */}
         {content.map((image) => {
@@ -91,34 +79,33 @@ export default function Images({ content }) {
             );
           } else {
             return (
-              <p className={styles.moodboard__text} key={image.id}>
-                {image.text}
-              </p>
+              <div key={image.id}>
+                <p
+                  className={styles.moodboard__text}
+                  onClick={() => {
+                    showOptions(image.id);
+                  }}
+                >
+                  {image.text}
+                </p>
+                {selected === image.id && isActive === true ? (
+                  <div className={styles.moodboard__image__options}>
+                    <h4 className={styles.moodboard__image__option}>Edit</h4>
+                    <h4
+                      className={styles.moodboard__image__option}
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </h4>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
             );
           }
         })}
-
-        {/* Map over the new images that user added
-        {newContent?.map((item, index) => {
-          if (checkURL(item) === true) {
-            return (
-              <img
-                className={styles.moodboard__image}
-                src={item}
-                key={index}
-                alt="New Moodboard Image"
-              />
-            );
-          } else {
-            return (
-              <p className={styles.moodboard__text} key={index}>
-                {item}
-              </p>
-            );
-          }
-        })} */}
       </div>
-      {/* <UploadImages getContent={getContent} /> */}
       <UploadImages />
     </main>
   );

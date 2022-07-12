@@ -4,10 +4,8 @@ import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import styles from "@/components/Upload/Upload.module.scss";
-import path from "path";
 
-export default function UploadImages({ getContent }) {
-  const [content, setContent] = useState([]);
+export default function UploadImages() {
   const { uploadToS3 } = useS3Upload();
   const router = useRouter();
 
@@ -27,18 +25,16 @@ export default function UploadImages({ getContent }) {
     }
   };
 
-  // This passes the state containing all NEW image urls from child to parent component via a function prop. Refer to [moodboardId]/index.js -> getURLs function. It takes the urls from the new images and stores it in the newImages state.
-  // We map over this data to display the new images underneath. On refresh, this data is gone but by then it will already be in the DB. This skips the step for needing a page refresh.
-  // useEffect(() => {
-  //   getContent(content);
-  // });
+  // Checks if URL is an image.
+  const checkURL = (url) => {
+    return /^https?:\/\/.+(jpg|jpeg|png|webp|avif|gif|svg)/.test(url);
+  };
 
-  // Takes the files and upload to Amazon S3, submit data to database, and setUrls in state.
+  // Takes the files and upload to Amazon S3, submit data to database, and setContent in state.
   const uploadFiles = async (files) => {
     for (const file of files) {
       const { url } = await uploadToS3(file);
       submitData(url);
-      setContent((current) => [...current, url]);
     }
   };
 
@@ -101,12 +97,6 @@ export default function UploadImages({ getContent }) {
       const files = Array.from(clipboardData.files);
       console.log("Files:", files);
 
-      // Checks if URL is an image.
-      function checkURL(url) {
-        return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
-      }
-      console.log(checkURL(text));
-
       // image copy
       // files: [obj...]
       // url? false
@@ -124,14 +114,11 @@ export default function UploadImages({ getContent }) {
         return uploadFiles(files);
       }
       // If the files array is empty and it's not an image url, add to db as "text" and setContent to render on page.
-      else if (files.length === 0) {
-        // else if (files.length === 0 && checkURL(text) === false) {
-        setContent((current) => [...current, text]);
+      else if (files.length === 0 && checkURL(text) === false) {
         submitData("", text);
       }
       // If the files array is empty and it's an image url, add to db as "url" and setContent to render on page
       else if (files.length === 0 && checkURL(text) === true) {
-        setContent((current) => [...current, text]);
         submitData(text);
       }
     };
@@ -140,8 +127,6 @@ export default function UploadImages({ getContent }) {
   // Handle text/urls via the "Paste Text" button
   const pasteText = async (event) => {
     event.preventDefault();
-    const clipboardTest = event.clipboardData;
-    console.log("Clipboard API:", clipboardTest);
     // Read the clipboard contents
     const clipboardContents = await navigator.clipboard.read().catch((e) => {
       return console.error(e);
@@ -154,22 +139,13 @@ export default function UploadImages({ getContent }) {
         if (clipboardContents[0].types.includes("text/plain")) {
           // Grab the text, do something with it:
           navigator.clipboard.readText().then((text) => {
-            // Checks if URL is an image.
-            function checkURL(url) {
-              return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(
-                url
-              );
-            }
-
             // If the text is NOT an image url, upload it to DB as "text"
             if (checkURL(text) === false) {
               // else if (files.length === 0 && checkURL(text) === false) {
-              setContent((current) => [...current, text]);
               submitData("", text);
             }
             // If the text is an image url, upload it to DB as "url"
             else if (checkURL(text) === true) {
-              setContent((current) => [...current, text]);
               submitData(text);
             }
           });
