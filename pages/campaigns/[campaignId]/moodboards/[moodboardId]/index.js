@@ -6,26 +6,47 @@ import Header from "@/components/Header/Header";
 import styles from "@/components/Moodboard/Moodboard.module.scss";
 import { prisma } from "@/utils/db";
 import Head from "next/head";
+import axios from "axios";
 
 export default function Images({ content }) {
-  const [newContent, setNewContent] = useState();
+  const router = useRouter();
+  // const [newContent, setNewContent] = useState();
   const [selected, setSelected] = useState();
   const [isActive, setActive] = useState(false);
 
-  const getContent = async (data) => {
-    await setNewContent(data);
-    console.log("New Content:", data);
+  const refreshData = () => {
+    // (url to navigate to, url to display, options: no scroll)
+    router.replace(router.asPath, router.asPath, { scroll: false });
+    setSelected("");
+    setActive(false);
   };
 
-  const checkURL = (url) => {
-    return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
-  };
+  // const getContent = async (data) => {
+  //   await setNewContent(data);
+  //   console.log("New Content:", data);
+  // };
+
+  // const checkURL = (url) => {
+  //   return /^https?:\/\/.+\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+  // };
 
   const showOptions = (id) => {
     // We pass id of the image into the selected state.
     setSelected(id);
     // Then toggle to the opposite of it's current state (false -> true)
     setActive(!isActive);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete("/api/moodboards", {
+        data: { selected: selected },
+      });
+      console.log(response);
+      refreshData();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   console.log(content);
@@ -56,7 +77,12 @@ export default function Images({ content }) {
                 {selected === image.id && isActive === true ? (
                   <div className={styles.moodboard__image__options}>
                     <h4 className={styles.moodboard__image__option}>Edit</h4>
-                    <h4 className={styles.moodboard__image__option}>Delete</h4>
+                    <h4
+                      className={styles.moodboard__image__option}
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </h4>
                   </div>
                 ) : (
                   ""
@@ -72,7 +98,7 @@ export default function Images({ content }) {
           }
         })}
 
-        {/* Map over the new images that user added*/}
+        {/* Map over the new images that user added
         {newContent?.map((item, index) => {
           if (checkURL(item) === true) {
             return (
@@ -90,9 +116,10 @@ export default function Images({ content }) {
               </p>
             );
           }
-        })}
+        })} */}
       </div>
-      <UploadImages getContent={getContent} />
+      {/* <UploadImages getContent={getContent} /> */}
+      <UploadImages />
     </main>
   );
 }

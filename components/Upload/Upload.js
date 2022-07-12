@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import styles from "@/components/Upload/Upload.module.scss";
+import path from "path";
 
 export default function UploadImages({ getContent }) {
   const [content, setContent] = useState([]);
@@ -12,25 +13,26 @@ export default function UploadImages({ getContent }) {
 
   // Add images to Prisma DB via serverless API
   const submitData = async (url, text) => {
-    axios
-      .post("/api/moodboards", {
+    try {
+      const response = await axios.post("/api/moodboards", {
         url: url,
         text: text,
         moodboardId: router.query.moodboardId,
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
       });
+      console.log(response);
+      // (url to navigate to, url to display, options: no scroll)
+      router.replace(router.asPath, router.asPath, { scroll: false });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // This passes the state containing all NEW image urls from child to parent component via a function prop. Refer to [moodboardId]/index.js -> getURLs function. It takes the urls from the new images and stores it in the newImages state.
   // We map over this data to display the new images underneath. On refresh, this data is gone but by then it will already be in the DB. This skips the step for needing a page refresh.
-  useEffect(() => {
-    getContent(content);
-  });
+  // useEffect(() => {
+  //   getContent(content);
+  // });
+
   // Takes the files and upload to Amazon S3, submit data to database, and setUrls in state.
   const uploadFiles = async (files) => {
     for (const file of files) {
