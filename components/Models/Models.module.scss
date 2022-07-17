@@ -1,0 +1,43 @@
+@use "@/partials/abstracts/mixins" as *;
+@use "@/partials/abstracts/variables" as *;
+
+.images {
+  display: flex;
+  flex-direction: column;
+  grid-column: span 2;
+}
+
+.image {
+  border: 0.5px solid $black;
+  // grid-column: span 2;
+  width: 100%;
+  padding: 1rem;
+  align-self: center;
+  margin-bottom: 1rem;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  grid-column: span 2;
+  border: 0.5px solid $black;
+  height: fit-content;
+  padding: 0.5rem;
+
+  &__row {
+    flex-grow: 1;
+  }
+
+  &__label {
+    min-width: 3.25rem;
+  }
+
+  &__info {
+    flex-grow: 1;
+    width: 100%;
+  }
+}
+
+.blur {
+  filter: blur(8px);
+}

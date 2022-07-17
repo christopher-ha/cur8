@@ -3,6 +3,13 @@
 @use "@/partials/abstracts/mixins" as *;
 @use "@/partials/abstracts/variables" as *;
 
+.container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 1rem;
+  margin: 0 1rem;
+}
+
 button,
 .button {
   color: $black;
@@ -15,5 +22,31 @@ button,
 
   @include tablet {
     padding: $p1 $p2;
+  }
+}
+
+.meatball {
+  &__menu {
+    background-color: #ffffff;
+    padding: 1rem;
+    border: 0.5px solid $black;
+    text-align: right;
+    width: 195px;
+    margin-bottom: 2rem;
+  }
+
+  &__toggle {
+    position: absolute;
+    right: 2rem;
+    bottom: 2rem;
+  }
+
+  &__item {
+    text-transform: uppercase;
+    padding-bottom: 0.5rem;
+  }
+
+  &__add {
+    padding-top: 2rem;
   }
 }

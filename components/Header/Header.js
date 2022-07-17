@@ -3,7 +3,7 @@ import styles from "@/components/Header/Header.module.scss";
 import Link from "next/link";
 import Modal from "react-modal";
 import { useState } from "react";
-import Menu from "@/components/Menu/Menu";
+import Menu from "@/components/Menu/Menu/Menu";
 
 const modalStyle = {
   overlay: {},

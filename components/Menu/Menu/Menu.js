@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "@/components/Menu/Menu.module.scss";
+import styles from "@/components/Menu/Menu/Menu.module.scss";
 import Link from "next/link";
 import { useRouter } from "next/router";
 

@@ -72,6 +72,7 @@ export default function UploadImages() {
       // This is where we upload the files using our function.
       uploadFiles(files);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     window.addEventListener("dragenter", handleDragIn);
@@ -87,42 +88,40 @@ export default function UploadImages() {
   });
 
   // Handle new files/text/urls via Paste on browser window
-  useEffect(() => {
-    document.onpaste = async function (event) {
-      const clipboardData = event.clipboardData || window.clipboardData;
-      // Gets text (image urls, text)
-      const text = clipboardData.getData("Text");
-      console.log("Text:", text);
-      // Gets image files
-      const files = Array.from(clipboardData.files);
-      console.log("Files:", files);
+  document.onpaste = async function (event) {
+    const clipboardData = event.clipboardData || window.clipboardData;
+    // Gets text (image urls, text)
+    const text = clipboardData.getData("Text");
+    console.log("Text:", text);
+    // Gets image files
+    const files = Array.from(clipboardData.files);
+    console.log("Files:", files);
 
-      // image copy
-      // files: [obj...]
-      // url? false
+    // image copy
+    // files: [obj...]
+    // url? false
 
-      // text
-      // files: []
-      // url: false
+    // text
+    // files: []
+    // url: false
 
-      // image url
-      // files: []
-      // url? true
+    // image url
+    // files: []
+    // url? true
 
-      // If the files array has an object, the user pasted a file: upload it normally.
-      if (files.length > 0) {
-        return uploadFiles(files);
-      }
-      // If the files array is empty and it's not an image url, add to db as "text" and setContent to render on page.
-      else if (files.length === 0 && checkURL(text) === false) {
-        submitData("", text);
-      }
-      // If the files array is empty and it's an image url, add to db as "url" and setContent to render on page
-      else if (files.length === 0 && checkURL(text) === true) {
-        submitData(text);
-      }
-    };
-  }, []);
+    // If the files array has an object, the user pasted a file: upload it normally.
+    if (files.length > 0) {
+      return uploadFiles(files);
+    }
+    // If the files array is empty and it's not an image url, add to db as "text" and setContent to render on page.
+    else if (files.length === 0 && checkURL(text) === false) {
+      submitData("", text);
+    }
+    // If the files array is empty and it's an image url, add to db as "url" and setContent to render on page
+    else if (files.length === 0 && checkURL(text) === true) {
+      submitData(text);
+    }
+  };
 
   // Handle text/urls via the "Paste Text" button
   const pasteText = async (event) => {

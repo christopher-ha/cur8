@@ -130,7 +130,15 @@ model Models {
   urlBody    String
   instagram  String?
   agency     String?
-  contact    String
+  contact    String?
+  height     Int?
+  bust       Int?
+  waist      Int?
+  hip        Int?
+  shoe       Int?
+  dress      Int?
+  hair       String?
+  eyes       String?
   SavedLooks SavedLooks[]
 }
 

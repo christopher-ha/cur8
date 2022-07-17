@@ -16,7 +16,7 @@ async function createCampaign(req, res) {
 
   try {
     // Create the campaign
-    const createCampaign = await prisma.campaigns.create({
+    const campaign = await prisma.campaigns.create({
       data: {
         name,
         description,
@@ -41,7 +41,7 @@ async function createCampaign(req, res) {
         permissions: "Creator",
       },
     });
-    return res.status(200).json(createCampaign, { success: true });
+    return res.status(200).json(campaign, { success: true });
   } catch (error) {
     console.error("Request error", error);
     res.status(500).json({ error: "Error creating campaign", success: false });
