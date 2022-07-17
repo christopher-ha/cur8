@@ -33,9 +33,33 @@ export default function UploadImages() {
   // Takes the files and upload to Amazon S3, submit data to database, and setContent in state.
   const uploadFiles = async (files) => {
     for (const file of files) {
-      const { url } = await uploadToS3(file);
-      submitData(url);
+      // const { url } = await uploadToS3(file);
+      const imageURL = await uploadS3(file);
+      console.log("uploadFile:", imageURL);
+      // submitData(url);
+      submitData(imageURL);
     }
+  };
+
+  // Upload to Amazon S3 Function
+  const uploadS3 = async (file) => {
+    let { data } = await axios.post("/api/s3/", {
+      name: file.name,
+      type: file.type,
+    });
+    const url = data.url;
+
+    let newData = await axios.put(url, file, {
+      headers: {
+        "Content-type": file.type,
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+    const parseURL = new URL(newData.request.responseURL);
+    console.log(parseURL);
+    const imageURL = parseURL.origin + parseURL.pathname;
+
+    return imageURL;
   };
 
   // Handle drag & drop on browser window (instead of a div)
@@ -88,40 +112,42 @@ export default function UploadImages() {
   });
 
   // Handle new files/text/urls via Paste on browser window
-  document.onpaste = async function (event) {
-    const clipboardData = event.clipboardData || window.clipboardData;
-    // Gets text (image urls, text)
-    const text = clipboardData.getData("Text");
-    console.log("Text:", text);
-    // Gets image files
-    const files = Array.from(clipboardData.files);
-    console.log("Files:", files);
+  if (typeof window === "object") {
+    document.onpaste = async function (event) {
+      const clipboardData = event.clipboardData || window.clipboardData;
+      // Gets text (image urls, text)
+      const text = clipboardData.getData("Text");
+      console.log("Text:", text);
+      // Gets image files
+      const files = Array.from(clipboardData.files);
+      console.log("Files:", files);
 
-    // image copy
-    // files: [obj...]
-    // url? false
+      // image copy
+      // files: [obj...]
+      // url? false
 
-    // text
-    // files: []
-    // url: false
+      // text
+      // files: []
+      // url: false
 
-    // image url
-    // files: []
-    // url? true
+      // image url
+      // files: []
+      // url? true
 
-    // If the files array has an object, the user pasted a file: upload it normally.
-    if (files.length > 0) {
-      return uploadFiles(files);
-    }
-    // If the files array is empty and it's not an image url, add to db as "text" and setContent to render on page.
-    else if (files.length === 0 && checkURL(text) === false) {
-      submitData("", text);
-    }
-    // If the files array is empty and it's an image url, add to db as "url" and setContent to render on page
-    else if (files.length === 0 && checkURL(text) === true) {
-      submitData(text);
-    }
-  };
+      // If the files array has an object, the user pasted a file: upload it normally.
+      if (files.length > 0) {
+        return uploadFiles(files);
+      }
+      // If the files array is empty and it's not an image url, add to db as "text" and setContent to render on page.
+      else if (files.length === 0 && checkURL(text) === false) {
+        submitData("", text);
+      }
+      // If the files array is empty and it's an image url, add to db as "url" and setContent to render on page
+      else if (files.length === 0 && checkURL(text) === true) {
+        submitData(text);
+      }
+    };
+  }
 
   // Handle text/urls via the "Paste Text" button
   const pasteText = async (event) => {
