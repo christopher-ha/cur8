@@ -17,14 +17,18 @@ export const config = {
   },
 };
 
-export default async function generateUploadURL(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+export default async function handle(req, res) {
+  if (req.method === "POST") {
+    return await generateUploadURL(req, res);
+  } else if (req.method === "DELETE") {
+    return await deleteObject(req, res);
   }
+}
+
+async function generateUploadURL(req, res) {
+  const { name, type } = req.body;
 
   try {
-    let { name, type } = req.body;
-
     const fileParams = {
       Bucket: process.env.S3_UPLOAD_BUCKET,
       Key: `images/${uuidv4()}/${name.replace(/\s/g, "-")}`,
@@ -38,5 +42,26 @@ export default async function generateUploadURL(req, res) {
   } catch (err) {
     console.log(err);
     res.status(400).json({ message: err });
+  }
+}
+
+async function deleteObject(req, res) {
+  let { key } = req.body;
+  // Removes the slash from the beginning of the Key, otherwise it won't work.
+  // /images/... ———> images/...
+  key = key.slice(1);
+  console.log(key);
+
+  try {
+    const response = await s3
+      .deleteObject({
+        Bucket: process.env.S3_UPLOAD_BUCKET,
+        Key: key,
+      })
+      .promise();
+    res.status(200).send(response.body);
+  } catch (error) {
+    console.error("Request error", error);
+    res.status(500).json({ error: "Error deleting item", success: false });
   }
 }

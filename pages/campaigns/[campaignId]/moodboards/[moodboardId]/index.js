@@ -20,22 +20,43 @@ export default function Images({ content }) {
     setActive(false);
   };
 
-  const showOptions = (id) => {
+  const showOptions = (id, url) => {
     // We pass id of the image into the selected state.
-    setSelected(id);
+    setSelected({ id, url });
     // Then toggle to the opposite of it's current state (false -> true)
     setActive(!isActive);
   };
 
   const handleDelete = async () => {
-    try {
-      const response = await axios.delete("/api/moodboards", {
-        data: { selected: selected },
-      });
-      console.log(response);
-      refreshData();
-    } catch (error) {
-      console.log(error);
+    const parseURL = new URL(selected.url);
+
+    if (
+      selected.url.startsWith("https://cur8-images.s3.us-east-2.amazonaws.com/")
+    ) {
+      try {
+        const responseDB = await axios.delete("/api/moodboards", {
+          data: { selected: selected.id },
+        });
+        const responseAWS = await axios.delete("/api/s3", {
+          data: { key: parseURL.pathname },
+        });
+        console.log("Database Delete:", responseDB);
+        console.log("AWS Delete:", responseAWS);
+
+        refreshData();
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        const response = await axios.delete("/api/moodboards", {
+          data: { selected: selected.id },
+        });
+        console.log(response);
+        refreshData();
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -58,11 +79,11 @@ export default function Images({ content }) {
                   src={image.url}
                   alt={image.text}
                   onClick={() => {
-                    showOptions(image.id);
+                    showOptions(image.id, image.url);
                   }}
                 />
                 {/* We set the state of selected onClick, so when we click one and it triggers a match to the image id, show the options. Only if the toggle is set to true, then we show options. Without this toggle, the edit buttons will always be there and have no state that breaks the condition. */}
-                {selected === image.id && isActive === true ? (
+                {selected?.id === image.id && isActive === true ? (
                   <div className={styles.moodboard__image__options}>
                     <h4 className={styles.moodboard__image__option}>Edit</h4>
                     <h4
@@ -88,7 +109,7 @@ export default function Images({ content }) {
                 >
                   {image.text}
                 </p>
-                {selected === image.id && isActive === true ? (
+                {selected?.id === image.id && isActive === true ? (
                   <div className={styles.moodboard__image__options}>
                     <h4 className={styles.moodboard__image__option}>Edit</h4>
                     <h4

@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useS3Upload } from "next-s3-upload";
 import { useRouter } from "next/router";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
 import styles from "@/components/Upload/Upload.module.scss";
 
 export default function UploadImages() {
-  const { uploadToS3 } = useS3Upload();
   const router = useRouter();
 
   // Add images to Prisma DB via serverless API
@@ -25,41 +23,41 @@ export default function UploadImages() {
     }
   };
 
-  // Checks if URL is an image.
-  const checkURL = (url) => {
-    return /^https?:\/\/.+(jpg|jpeg|png|webp|avif|gif|svg)/.test(url);
-  };
-
-  // Takes the files and upload to Amazon S3, submit data to database, and setContent in state.
-  const uploadFiles = async (files) => {
-    for (const file of files) {
-      // const { url } = await uploadToS3(file);
-      const imageURL = await uploadS3(file);
-      console.log("uploadFile:", imageURL);
-      // submitData(url);
-      submitData(imageURL);
-    }
-  };
-
   // Upload to Amazon S3 Function
   const uploadS3 = async (file) => {
+    // Generate a presigned URL
     let { data } = await axios.post("/api/s3/", {
       name: file.name,
       type: file.type,
     });
+    // This is the presigned URL.
     const url = data.url;
 
+    // Use presignedURL to upload directly to AWS using a PUT request.
     let newData = await axios.put(url, file, {
       headers: {
         "Content-type": file.type,
         "Access-Control-Allow-Origin": "*",
       },
     });
+    // Find the final image url by parsing the url inside of responseURL.
     const parseURL = new URL(newData.request.responseURL);
-    console.log(parseURL);
+    // Construct the final image url.
     const imageURL = parseURL.origin + parseURL.pathname;
-
     return imageURL;
+  };
+
+  // Takes the files and upload to Amazon S3, submit data to database, and setContent in state.
+  const uploadFiles = async (files) => {
+    for (const file of files) {
+      const imageURL = await uploadS3(file);
+      submitData(imageURL);
+    }
+  };
+
+  // Checks if URL is an image.
+  const checkURL = (url) => {
+    return /^https?:\/\/.+(jpg|jpeg|png|webp|avif|gif|svg)/.test(url);
   };
 
   // Handle drag & drop on browser window (instead of a div)
