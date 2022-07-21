@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 
 export default function Menu() {
   const { asPath, basePath, pathname, query } = useRouter();
+  const router = useRouter();
   console.log("---------------");
   console.log("asPath:", asPath);
   console.log("basePath:", basePath);
@@ -14,7 +15,7 @@ export default function Menu() {
   if (pathname === "/campaigns") {
     return (
       <div className={styles.menu}>
-        <Link href={`${basePath}/profile`}>
+        <Link href={`${basePath}/auth/profile`}>
           <h1 className={styles.menu__item}>Profile</h1>
         </Link>
         <Link href={`${basePath}/auth/logout`}>

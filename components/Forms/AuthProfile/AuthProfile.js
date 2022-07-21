@@ -4,12 +4,14 @@ import styles from "@/components/Forms/Form.module.scss";
 import axios from "axios";
 // import { useSession } from "next-auth/react";
 
-export default function AuthNewUser() {
+export default function AuthProfile({ user }) {
   // const { data: session, status } = useSession();
   // console.log(session?.user.id, status);
 
   // Initialize next-router
   const router = useRouter();
+  console.log(router.asPath);
+  console.log(router.asPath.includes("?callbackUrl"));
 
   // Initialize react-hook-form
   const {
@@ -31,8 +33,15 @@ export default function AuthNewUser() {
         console.log(error);
       });
 
-    // Redirect to create campaign page after info has been submitted.
-    router.push("/campaigns/create");
+    if (router.asPath.includes("?callbackUrl")) {
+      // Redirect to create campaign page after info has been submitted.
+      router.push("/campaigns/create");
+    }
+
+    if (!router.asPath.includes("?callbackUrl")) {
+      // If the user is already logged in, send them back to the campaigns page.
+      router.push("/campaigns");
+    }
   };
 
   return (
@@ -51,7 +60,8 @@ export default function AuthNewUser() {
             <input
               className={styles.formGroup__input}
               type="text"
-              placeholder="*"
+              placeholder={"*"}
+              value={user ? user.name : ""}
               {...register("name", {
                 required: "Enter a valid name",
               })}
@@ -65,6 +75,7 @@ export default function AuthNewUser() {
               className={styles.formGroup__input}
               type="text"
               placeholder="-"
+              value={user ? user.role : ""}
               maxLength="50"
               {...register("role", { required: false })}
             />
@@ -77,6 +88,7 @@ export default function AuthNewUser() {
               className={styles.formGroup__input}
               type="text"
               placeholder="-"
+              value={user ? user.instagram : ""}
               maxLength="30"
               {...register("instagram", { required: false })}
             />
@@ -91,6 +103,7 @@ export default function AuthNewUser() {
               maxLength="15"
               // pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
               placeholder="*"
+              value={user ? user.number : ""}
               {...register("number", {
                 required: "Enter a valid phone number.",
                 // minLength: {

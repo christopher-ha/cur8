@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import Router, { useRouter } from "next/router";
 import { prisma } from "@/utils/db";
 import { getSession } from "next-auth/react";
 import Header from "@/components/Header/Header";
@@ -9,7 +9,7 @@ import Head from "next/head";
 export default function Campaign({ campaigns }) {
   // console.log(campaigns);
 
-  // const router = useRouter();
+  const router = useRouter();
   // console.log(router);
   // const campaignId = router.query.campaignId;
   return (
@@ -30,6 +30,14 @@ export default function Campaign({ campaigns }) {
             </div>
           </Link>
         ))}
+        <div
+          className={styles.block}
+          onClick={() => {
+            router.push("/campaigns/create");
+          }}
+        >
+          <h4>+ CREATE A CAMPAIGN</h4>
+        </div>
       </section>
     </main>
   );

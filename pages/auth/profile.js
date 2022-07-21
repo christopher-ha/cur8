@@ -1,16 +1,19 @@
 import Head from "next/head";
-import AuthNewUser from "@/components/Forms/AuthNewUser/AuthNewUser";
+import AuthProfile from "@/components/Forms/AuthProfile/AuthProfile";
 import Header from "@/components/Header/Header";
 import { getSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function NewUser() {
+  const { data: session, status } = useSession();
+  console.log(session);
   return (
     <>
       <Head>
         <title>Profile</title>
       </Head>
       <Header title={"Profile"} logoVisible={false} menuVisible={false} />
-      <AuthNewUser />
+      <AuthProfile user={session.user} />
     </>
   );
 }
