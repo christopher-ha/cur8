@@ -33,6 +33,9 @@ export default function Menu() {
         <Link href={`${asPath}/models`}>
           <h1 className={styles.menu__item}>Models</h1>
         </Link>
+        <Link href={`${asPath}/wardrobe`}>
+          <h1 className={styles.menu__item}>Wardrobe</h1>
+        </Link>
         <Link href={`${asPath}/looks-builder`}>
           <h1 className={styles.menu__item}>Looks Builder</h1>
         </Link>
@@ -56,6 +59,9 @@ export default function Menu() {
       </Link>
       <Link href={`${basePath}/campaigns/${query.campaignId}/models`}>
         <h1 className={styles.menu__item}>Models</h1>
+      </Link>
+      <Link href={`${basePath}/campaigns/${query.campaignId}/wardrobe`}>
+        <h1 className={styles.menu__item}>Wardrobe</h1>
       </Link>
       <Link href={`${basePath}/campaigns/${query.campaignId}/looks-builder`}>
         <h1 className={styles.menu__item}>Looks Builder</h1>

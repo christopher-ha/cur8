@@ -28,10 +28,10 @@ export default function Images({ content }) {
   };
 
   const handleDelete = async () => {
-    const parseURL = new URL(selected.url);
-
     if (
-      selected.url.startsWith("https://cur8-images.s3.us-east-2.amazonaws.com/")
+      selected.url?.startsWith(
+        "https://cur8-images.s3.us-east-2.amazonaws.com/"
+      )
     ) {
       try {
         const responseDB = await axios.delete("/api/moodboards", {
@@ -63,7 +63,7 @@ export default function Images({ content }) {
   // console.log(content);
 
   return (
-    <main className={styles.moodboard__container}>
+    <main>
       <Head>
         <title>Moodboard</title>
       </Head>
@@ -73,7 +73,7 @@ export default function Images({ content }) {
         {content.map((image) => {
           if (image.url) {
             return (
-              <div key={image.id}>
+              <div key={image.id} className={styles.moodboard__item}>
                 <img
                   className={styles.moodboard__image}
                   src={image.url}

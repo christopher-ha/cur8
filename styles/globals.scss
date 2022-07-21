@@ -36,7 +36,7 @@ button,
   }
 
   &__toggle {
-    position: absolute;
+    position: fixed;
     right: 2rem;
     bottom: 2rem;
   }
@@ -49,4 +49,8 @@ button,
   &__add {
     padding-top: 2rem;
   }
+}
+
+.blur {
+  filter: blur(8px);
 }
