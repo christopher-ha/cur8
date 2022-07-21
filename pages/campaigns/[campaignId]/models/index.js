@@ -54,9 +54,8 @@ export default function Models({ models }) {
   // Selected Model, or default to first model in list.
   const selectedModel = findModel(model)[0] || models[0];
 
-  // console.log(models);
   return (
-    <main className={`${modalIsOpen === true ? `${styles.blur}` : ""}`}>
+    <main className={`${modalIsOpen === true ? "blur" : ""}`}>
       <Head>
         <title>Models</title>
       </Head>
@@ -66,16 +65,21 @@ export default function Models({ models }) {
       {/* // if modal is open, add blur class */}
       <div className={`container`}>
         <div className={styles.images}>
-          <img
-            className={styles.image}
-            src={selectedModel.urlFace}
-            alt={`${selectedModel.name}'s Face`}
-          />
-          <img
-            className={styles.image}
-            src={selectedModel.urlBody}
-            alt={`${selectedModel.name}'s Body`}
-          />
+          {/* Keep the images wrapped in a div or else it will stretch on Safari. */}
+          <div>
+            <img
+              className={styles.image}
+              src={selectedModel.urlFace}
+              alt={`${selectedModel.name}'s Face`}
+            />
+          </div>
+          <div>
+            <img
+              className={styles.image}
+              src={selectedModel.urlBody}
+              alt={`${selectedModel.name}'s Body`}
+            />
+          </div>
         </div>
         <table className={styles.table}>
           <tbody>

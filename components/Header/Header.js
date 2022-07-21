@@ -74,7 +74,11 @@ export default function Header({ title, campaign, logoVisible, menuVisible }) {
         contentLabel="Hamburger Menu"
       >
         <Menu />
-        <button onClick={closeModal}>Close</button>
+        <img
+          src="/icons/exit-button.svg"
+          className={styles.menu__exit}
+          onClick={closeModal}
+        />
       </Modal>
     </div>
   );

@@ -3,6 +3,7 @@
 
 .header {
   display: flex;
+  position: relative;
   justify-content: space-between;
   margin: 1rem;
 
@@ -37,13 +38,12 @@
       align-self: center;
     }
   }
+}
 
-  // &__modal {
-  //   position: absolute;
-  //   background-color: red;
-  //   height: 100%;
-  //   width: 100%;
-  // }
+.menu__exit {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
 
 .hidden {
