@@ -12,7 +12,11 @@ export default function Campaign() {
       <Head>
         <title>Create Campaign</title>
       </Head>
-      <Header title={"Create Campaign"} logoVisible={false} />
+      <Header
+        title={"Create Campaign"}
+        logoVisible={false}
+        menuVisible={false}
+      />
       <CreateCampaign />
     </>
   );

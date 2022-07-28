@@ -100,6 +100,16 @@ export default function Models({ wardrobe }) {
         contentLabel="meatball Menu"
       >
         <div className="meatball__menu">
+          <h4
+            className="meatball__item"
+            // Set the items data to the original data (list of all items)
+            onClick={() => {
+              setItems(wardrobe);
+              closeModal();
+            }}
+          >
+            ALL ITEMS
+          </h4>
           {[...wardrobeSet].map((category, index) => {
             return (
               <h4

@@ -38,7 +38,7 @@ export default function Images({ content }) {
           data: { selected: selected.id },
         });
         const responseAWS = await axios.delete("/api/s3", {
-          data: { key: parseURL.pathname },
+          data: { key: new URL(selected.url).pathname },
         });
         console.log("Database Delete:", responseDB);
         console.log("AWS Delete:", responseAWS);

@@ -49,8 +49,16 @@ button,
   &__add {
     padding-top: 2rem;
   }
+
+  &__active {
+    text-decoration: underline;
+  }
 }
 
 .blur {
   filter: blur(8px);
+}
+
+.img-preview {
+  overflow: hidden;
 }

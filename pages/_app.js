@@ -3,6 +3,8 @@ import { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import Layout from "@/components/Layout/Layout";
 import Head from "next/head";
+import "react-image-crop/src/ReactCrop.scss";
+// import "cropperjs/dist/cropper.css";
 
 export default function App({
   Component,
