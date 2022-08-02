@@ -12,7 +12,7 @@ export default function error({ baseUrl, basePath, error, res }) {
       message: (
         <p>
           <a className="site" href={baseUrl}>
-            {baseUrl.replace(/^https?:\/\//, "")}
+            {baseUrl?.replace(/^https?:\/\//, "")}
           </a>
         </p>
       ),
@@ -61,9 +61,9 @@ export default function error({ baseUrl, basePath, error, res }) {
   };
 
   const { statusCode, heading, message, signin } =
-    errors[error.toLowerCase()] || errors.default;
+    errors[error?.toLowerCase()] || errors.default;
 
-  res.status(statusCode);
+  res?.status(statusCode);
 
   return render(
     <div className="error">
