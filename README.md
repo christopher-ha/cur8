@@ -1,9 +1,12 @@
 <img src="https://user-images.githubusercontent.com/63668974/182755808-92bd33a7-2830-4915-89b7-dc7f3d46ee80.png" width=100/>
 
 A collaborative project management app for stylists, photographers, designers, and creative directors in the fashion industry.  
-Designed + Developed by [bhris.Digital](https://bhris.digital/) [@bhris001](https://www.instagram.com/bhris001/)
+Designed + Developed by [bhris.Digital](https://bhris.digital/) — [@bhris001](https://www.instagram.com/bhris001/)
 
 https://www.cur8.world/
+
+<img width="1128" alt="image" src="https://user-images.githubusercontent.com/63668974/182760473-3f63b00c-8dea-4ace-beef-9f669d9322fa.png">
+
 
 ## Why did I create cur8?
 When I worked in on-set production for campaigns and collaborated with my friends who were stylists, I realized that the creative workflow was barbaric. Typically you'd have a creative director or stylist create a moodboards and a call sheet that is sent out via e-mail. If any information was changed, the file had to be re-exported and sent out again.   
