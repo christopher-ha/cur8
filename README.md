@@ -1,38 +1,56 @@
-## cur8
+<img src="https://user-images.githubusercontent.com/63668974/182755808-92bd33a7-2830-4915-89b7-dc7f3d46ee80.png" width=100/>
 
-A collaborative project management app for stylists, MUAs, photographers designers, and creative directors in the fashion industry.
+A collaborative project management app for stylists, photographers, designers, and creative directors in the fashion industry.  
+Designed + Developed by [bhris.Digital](https://bhris.digital/) [@bhris001](https://www.instagram.com/bhris001/)
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+https://www.cur8.world/
 
-## Getting Started
+## Why did I create cur8?
+When I worked in on-set production for campaigns and collaborated with my friends who were stylists, I realized that the creative workflow was barbaric. Typically you'd have a creative director or stylist create a moodboards and a call sheet that is sent out via e-mail. If any information was changed, the file had to be re-exported and sent out again.   
 
-First, run the development server:
+Not only was the information flow resistant to change, but the information was split across multiple files and image-based social platforms (ie. Instagram, Pinterest, Are.na, Google Images).
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+The problem space can be summarized as: *a scattered information flow that wasn't built for change or collaboration.*  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+By using real production moodboards and call sheets from fashion stylists as reference, cur8 was designed to centralize the information flow and provide stylists with tools that let them focus less on formatting and more on creating. 
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Technology Stack
+- Next.js (Serverless Full Stack)
+- SASS (Styling)
+- Vercel (Deployment)
+- Prisma (Query)
+- PostgreSQL (Database)
+- Supabase (Database Deployment)
+- NextAuth (Authentication)
+- SendGrid (Email API)
+- AWS (Image Storage & Cloud Computing)
+- Figma (Product Design)
+- Notion (Project Planning)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Pages
+- Campaigns
+- Moodboard
+- Wardrobe
+- Looks Builder
+- Manage Team
+- Call Sheet
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Special Features
+- Passwordless Authentication (NextAuth)
+- AI Assisted Image Background Remover (rembg / u2-net)
+- Instant Image & Text Upload for Moodboarding
+  - File Picker
+  - Copy & Paste
+  - Drag & Drop
+  - Screenshots
+  - Image URLs
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+## Production
+Created with create-next-app (Next.js) using serverless file architecture. API routes require no servers to access data.  
+AWS handles image storage (S3 Bucket) for all image uploads and cloud computing (EC2 Instances) for the rembg server.  
+**ENV is required so this most likely will not run if downloaded locally.**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### Commands
+`npm run dev (local)`
+`vercel dev (vercel)`
