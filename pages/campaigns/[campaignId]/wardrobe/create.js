@@ -9,6 +9,7 @@ import ReactCrop, {
   Crop,
   PixelCrop,
 } from "react-image-crop";
+import axios from "axios";
 import Header from "@/components/Header/Header";
 import Modal from "react-modal";
 import Link from "next/link";
@@ -24,31 +25,20 @@ export default function Looks() {
   const [crop, setCrop] = useState();
   const [croppedImageUrl, setCroppedImageUrl] = useState();
   const [aspect, setAspect] = useState(0);
+  const [test, setTest] = useState();
 
   // react-dropzone
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
 
   // react-dropzone -> these are the files that were dropped or selected.
   useEffect(() => {
-    console.log("Default:", acceptedFiles);
     if (acceptedFiles && acceptedFiles.length > 0) {
       const imageURL = URL.createObjectURL(acceptedFiles[0]);
       setImage(imageURL);
-      console.log(imageURL);
     }
   }, [acceptedFiles]);
 
-  // react-image-crop:
-  // File reader
-  // const onSelectFile = (event) => {
-  //   console.log(event.target.files);
-  //   if (event.target.files && event.target.files.length > 0) {
-  //     const reader = new FileReader();
-  //     reader.addEventListener("load", () => setImage(reader.result));
-  //     reader.readAsDataURL(event.target.files[0]);
-  //   }
-  // };
-
+  // react-image-crop
   // Sets dimensions of cropped area
   function onImageLoad(event) {
     if (aspect) {
@@ -94,7 +84,8 @@ export default function Looks() {
     try {
       return new Promise((resolve) => {
         canvas.toBlob((file) => {
-          resolve(URL.createObjectURL(file));
+          // resolve(URL.createObjectURL(file));
+          resolve(file);
         }, "image/jpeg");
       });
     } catch (error) {
@@ -103,9 +94,60 @@ export default function Looks() {
     }
   };
 
-  const handleSubmit = () => {
-    // convert blob to File
-    // upload
+  // Upload to S3
+  const uploadS3 = async (file) => {
+    // Generate a presigned URL
+    let { data } = await axios.post("/api/s3/", {
+      name: file.name,
+      type: file.type,
+    });
+    // This is the presigned URL.
+    const url = data.url;
+
+    // Use presignedURL to upload directly to AWS using a PUT request.
+    let newData = await axios.put(url, file, {
+      headers: {
+        "Content-type": file.type,
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+    // Find the final image url by parsing the url inside of responseURL.
+    const parseURL = new URL(newData.request.responseURL);
+    // Construct the final image url.
+    const imageURL = parseURL.origin + parseURL.pathname;
+    return imageURL;
+  };
+
+  // rembg integration
+  const handleSubmit = (event) => {
+    // 1 -> convert croppedImageURL to file
+    console.log(croppedImageUrl);
+    let testing = new File([croppedImageUrl], `image_${Date.now()}.jpeg`, {
+      type: "image/jpeg",
+      lastModified: Date.now(),
+    });
+
+    setTest(URL.createObjectURL(testing));
+
+    // 2 -> upload file to S3 (croppedImgUrl to file)
+    // const imageS3 = await uploadS3(file);
+    // console.log(imageS3);
+
+    // 3 -> use AWS link in query params -> axios post
+    // const imageRembg = await axios
+    //   .post("/api/wardrobe", {
+    //     file: croppedImageUrl,
+    //   })
+    //   // .get(`http://13.58.192.71:5000/?url=${croppedImageUrl}`)
+    //   .then((response) => {
+    //     console.log(response);
+    //   })
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
+    // console.log(imageRembg);
+    // 4 -> delete image from AWS after promise is resolved
+    // 5 -> get returned transparent image, store in S3
   };
 
   return (
@@ -115,7 +157,6 @@ export default function Looks() {
       </Head>
       <Header title={"Looks Builder"} />
       <div>
-        {/* <input type="file" accept="image/*" onChange={onSelectFile} /> */}
         <ReactCrop
           crop={crop}
           onChange={(c) => setCrop(c)}
@@ -124,12 +165,13 @@ export default function Looks() {
           <img src={image} onLoad={onImageLoad} ref={imgRef} />
         </ReactCrop>
       </div>
-      {/* <img src={croppedImageUrl} /> */}
-      {/* <p>Files: {files}</p> */}
+      {/* <img src={croppedImageFileConverted} /> */}
+
+      {test ? <img src={test} /> : ""}
 
       {!image ? (
         <div {...getRootProps({ className: "dropzone" })}>
-          <input {...getInputProps()} />
+          <input type="file" name="file" {...getInputProps()} />
           <div className={styles.dropzone}>
             <h4>+ ADD IMAGE</h4>
           </div>
@@ -137,36 +179,8 @@ export default function Looks() {
       ) : (
         ""
       )}
+
+      <button onClick={handleSubmit}>Submit</button>
     </main>
   );
 }
-
-// export async function getServerSideProps(context) {
-//   const { params, req, res } = context;
-
-//   // Get the campaignId from url params
-//   const campaignId = params.campaignId;
-
-//   // Find all the models that match the campaignId
-//   const models = await prisma.models.findMany({
-//     where: {
-//       campaignId: campaignId,
-//     },
-//   });
-
-//   // Find all the items that match the campaignId
-//   const wardrobe = await prisma.wardrobe.findMany({
-//     where: {
-//       campaignId: campaignId,
-//     },
-//   });
-
-//   // get all Saved Looks (img img img img img), input this later.
-
-//   return {
-//     props: {
-//       models: JSON.parse(JSON.stringify(models)),
-//       wardrobe: JSON.parse(JSON.stringify(wardrobe)),
-//     },
-//   };
-// }
