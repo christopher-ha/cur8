@@ -26,6 +26,7 @@ export default function Looks() {
   const [croppedImageUrl, setCroppedImageUrl] = useState();
   const [aspect, setAspect] = useState(0);
   const [test, setTest] = useState();
+  const [transparentImage, setTransparentImage] = useState();
 
   // react-dropzone
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
@@ -119,35 +120,51 @@ export default function Looks() {
   };
 
   // rembg integration
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     // 1 -> convert croppedImageURL to file
     console.log(croppedImageUrl);
-    let testing = new File([croppedImageUrl], `image_${Date.now()}.jpeg`, {
+    let file = await new File([croppedImageUrl], `image_${Date.now()}.jpeg`, {
       type: "image/jpeg",
       lastModified: Date.now(),
     });
 
-    setTest(URL.createObjectURL(testing));
+    setTest(URL.createObjectURL(file));
 
     // 2 -> upload file to S3 (croppedImgUrl to file)
-    // const imageS3 = await uploadS3(file);
-    // console.log(imageS3);
+    const imageS3 = await uploadS3(file);
+    console.log("S3 Image URL:", imageS3);
 
-    // 3 -> use AWS link in query params -> axios post
-    // const imageRembg = await axios
-    //   .post("/api/wardrobe", {
-    //     file: croppedImageUrl,
-    //   })
-    //   // .get(`http://13.58.192.71:5000/?url=${croppedImageUrl}`)
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-    // console.log(imageRembg);
-    // 4 -> delete image from AWS after promise is resolved
-    // 5 -> get returned transparent image, store in S3
+    // 3 -> use s3 image link inside rembg ?url= via axios POST
+    const imageRembg = await axios
+      .post(
+        "/api/wardrobe",
+        {
+          file: imageS3,
+        },
+        { responseType: "arraybuffer" }
+      )
+      // 4 -> returns an ArrayBuffer containing the image data. convert to a base64 image string.
+      .then((response) => {
+        console.log(response);
+        let base64ImageString = Buffer.from(response.data, "binary").toString(
+          "base64"
+        );
+        let srcValue = "data:image/png;base64," + base64ImageString;
+        setTransparentImage(srcValue);
+      })
+      // 5 -> delete the original image from S3 bucket
+      .then(() => {
+        const responseAWS = axios.delete("/api/s3", {
+          data: { key: new URL(imageS3).pathname },
+        });
+        console.log("AWS Delete:", responseAWS);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    // 6 -> get returned transparent image, store in S3
+    // convert base64ImageString to javascript file -> send to s3 to get transparent image url
   };
 
   return (
@@ -165,9 +182,9 @@ export default function Looks() {
           <img src={image} onLoad={onImageLoad} ref={imgRef} />
         </ReactCrop>
       </div>
-      {/* <img src={croppedImageFileConverted} /> */}
 
       {test ? <img src={test} /> : ""}
+      {transparentImage ? <img src={transparentImage} /> : ""}
 
       {!image ? (
         <div {...getRootProps({ className: "dropzone" })}>
@@ -184,3 +201,7 @@ export default function Looks() {
     </main>
   );
 }
+
+// check for current url -> find campaign id
+// add item with transparnet image to wardrobe with rest of info (brand, description, size, etc.)
+// store to db

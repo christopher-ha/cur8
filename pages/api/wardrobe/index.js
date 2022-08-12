@@ -13,12 +13,15 @@ async function rembg(req, res) {
   console.log(file);
 
   try {
-    const rembgFile = await axios
-      .get(`http://13.58.192.71:5000/?url=${file}`)
+    await axios
+      .get(`http://13.58.192.71:5000/?url=${file}`, {
+        responseType: "arraybuffer",
+      })
       .then((response) => {
-        console.log(response);
+        return res.status(200).send(response.data);
       });
     // return res.status(200).json(rembgFile, { success: true });
+    // return res.status(200).send(rembgFile);
   } catch (error) {
     console.error("Request error", error);
     res.status(500).json({ error: "Error using rembg", success: false });
