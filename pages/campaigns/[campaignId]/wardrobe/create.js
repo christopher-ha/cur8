@@ -27,6 +27,8 @@ export default function Looks() {
   const [aspect, setAspect] = useState(0);
   const [test, setTest] = useState();
   const [transparentImage, setTransparentImage] = useState();
+  const [transparentImageFile, setTransparentImageFile] = useState();
+  const [testFile, setTestFile] = useState();
 
   // react-dropzone
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
@@ -146,11 +148,24 @@ export default function Looks() {
       // 4 -> returns an ArrayBuffer containing the image data. convert to a base64 image string.
       .then((response) => {
         console.log(response);
+        // convert array buffer to base64 to display image
         let base64ImageString = Buffer.from(response.data, "binary").toString(
           "base64"
         );
         let srcValue = "data:image/png;base64," + base64ImageString;
         setTransparentImage(srcValue);
+
+        // convert array buffer to file
+        const fileToS3 = new File([response.data], `image_${Date.now()}.jpeg`, {
+          type: "image/jpeg",
+          lastModified: Date.now(),
+        });
+        setTransparentImageFile(fileToS3);
+        console.log("fileToS3:", fileToS3);
+        // test file if it actually works lol
+        const testFile = URL.createObjectURL(fileToS3);
+        setTestFile(testFile);
+        console.log("file url:", testFile);
       })
       // 5 -> delete the original image from S3 bucket
       .then(() => {
@@ -158,6 +173,22 @@ export default function Looks() {
           data: { key: new URL(imageS3).pathname },
         });
         console.log("AWS Delete:", responseAWS);
+      })
+      // convert base64 image => blob => file that can be uploaded to s3 bucket.
+      .then(() => {
+        // // convert base64 image to blob
+        // const blob = fetch(transparentImage).then((res) => res.blob());
+        // console.log("blob:", blob);
+        // // convert blob to file
+        // let file = new File([blob], `image_${Date.now()}.jpeg`, {
+        //   type: "image/jpeg",
+        //   lastModified: Date.now(),
+        // });
+        // setTransparentImageFile(file);
+        // console.log("file:", file);
+        // const testFile = URL.createObjectURL(file);
+        // setTestFile(testFile);
+        // console.log("file url:", testFile);
       })
       .catch((error) => {
         console.log(error);
@@ -185,6 +216,7 @@ export default function Looks() {
 
       {test ? <img src={test} /> : ""}
       {transparentImage ? <img src={transparentImage} /> : ""}
+      {testFile ? <img src={testFile} /> : ""}
 
       {!image ? (
         <div {...getRootProps({ className: "dropzone" })}>
