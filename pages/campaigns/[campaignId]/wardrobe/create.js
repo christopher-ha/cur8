@@ -23,12 +23,15 @@ export default function Looks() {
   const imgRef = useRef();
   const previewCanvasRef = useRef();
   const [crop, setCrop] = useState();
-  const [croppedImageUrl, setCroppedImageUrl] = useState();
+  const [croppedImageURL, setCroppedImageURL] = useState(null);
   const [aspect, setAspect] = useState(0);
-  const [test, setTest] = useState();
+  // const [test, setTest] = useState();
   const [transparentImage, setTransparentImage] = useState();
-  const [transparentImageFile, setTransparentImageFile] = useState();
-  const [testFile, setTestFile] = useState();
+  // const [transparentImageFile, setTransparentImageFile] = useState();
+  // const [testFile, setTestFile] = useState();
+  const [transparentImageURLs, setTransparentImageURLs] = useState([]);
+  const [rembgIsLoading, setRembgIsLoading] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
 
   // react-dropzone
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
@@ -40,6 +43,24 @@ export default function Looks() {
       setImage(imageURL);
     }
   }, [acceptedFiles]);
+
+  useEffect(() => {
+    // Prevents useEffect from triggering on load -> if there is no cropped area, don't run the post function.
+    if (croppedImageURL !== null) {
+      const identifier = setTimeout(() => {
+        console.log("POST");
+        setRembgIsLoading(true);
+        handleRembg();
+      }, 4000);
+    }
+
+    return () => {
+      clearTimeout(identifier);
+      setRembgIsLoading(false);
+    };
+  }, [croppedImageURL]);
+
+  useEffect(() => {}, []);
 
   // react-image-crop
   // Sets dimensions of cropped area
@@ -61,7 +82,7 @@ export default function Looks() {
         crop,
         "newFile.jpeg"
       );
-      setCroppedImageUrl(croppedImg);
+      setCroppedImageURL(croppedImg);
     }
   };
   // Logic for getting the cropped area as an image url
@@ -87,7 +108,6 @@ export default function Looks() {
     try {
       return new Promise((resolve) => {
         canvas.toBlob((file) => {
-          // resolve(URL.createObjectURL(file));
           resolve(file);
         }, "image/jpeg");
       });
@@ -122,21 +142,22 @@ export default function Looks() {
   };
 
   // rembg integration
-  const handleSubmit = async (event) => {
-    // 1 -> convert croppedImageURL to file
-    console.log(croppedImageUrl);
-    let file = await new File([croppedImageUrl], `image_${Date.now()}.jpeg`, {
+  const handleRembg = async (event) => {
+    // Start the rembg progress, mark it as in progress (true).
+    // 1. Convert croppedImageURL to file
+    console.log(croppedImageURL);
+    let file = await new File([croppedImageURL], `image_${Date.now()}.jpeg`, {
       type: "image/jpeg",
       lastModified: Date.now(),
     });
 
-    setTest(URL.createObjectURL(file));
+    // setTest(URL.createObjectURL(file));
 
-    // 2 -> upload file to S3 (croppedImgUrl to file)
+    // 2. Upload file to S3 (croppedImgURL to file)
     const imageS3 = await uploadS3(file);
-    console.log("S3 Image URL:", imageS3);
+    console.log("Original S3 Image URL:", imageS3);
 
-    // 3 -> use s3 image link inside rembg ?url= via axios POST
+    // 3. Use s3 image link inside rembg ?url= via axios POST
     const imageRembg = await axios
       .post(
         "/api/wardrobe",
@@ -145,7 +166,7 @@ export default function Looks() {
         },
         { responseType: "arraybuffer" }
       )
-      // 4 -> returns an ArrayBuffer containing the image data. convert to a base64 image string.
+      // 4. Returns an ArrayBuffer containing the image data. convert to a base64 image string and file.
       .then((response) => {
         console.log(response);
         // convert array buffer to base64 to display image
@@ -160,43 +181,56 @@ export default function Looks() {
           type: "image/jpeg",
           lastModified: Date.now(),
         });
-        setTransparentImageFile(fileToS3);
-        console.log("fileToS3:", fileToS3);
-        // test file if it actually works lol
-        const testFile = URL.createObjectURL(fileToS3);
-        setTestFile(testFile);
-        console.log("file url:", testFile);
+
+        // 5. Upload to S3.
+        const imageURL = uploadS3(fileToS3);
+        // Store URL in Array
+        setTransparentImageURLs((arr) => [...arr, imageURL]);
+        return console.log("Final S3 Image URL:", imageURL);
       })
-      // 5 -> delete the original image from S3 bucket
+      // 6. Delete the original image from S3 bucket
       .then(() => {
         const responseAWS = axios.delete("/api/s3", {
           data: { key: new URL(imageS3).pathname },
         });
-        console.log("AWS Delete:", responseAWS);
+        return console.log("AWS Delete:", responseAWS);
       })
-      // convert base64 image => blob => file that can be uploaded to s3 bucket.
       .then(() => {
-        // // convert base64 image to blob
-        // const blob = fetch(transparentImage).then((res) => res.blob());
-        // console.log("blob:", blob);
-        // // convert blob to file
-        // let file = new File([blob], `image_${Date.now()}.jpeg`, {
-        //   type: "image/jpeg",
-        //   lastModified: Date.now(),
-        // });
-        // setTransparentImageFile(file);
-        // console.log("file:", file);
-        // const testFile = URL.createObjectURL(file);
-        // setTestFile(testFile);
-        // console.log("file url:", testFile);
+        return setRembgIsLoading(false);
       })
       .catch((error) => {
-        console.log(error);
+        return console.log(error);
       });
-
-    // 6 -> get returned transparent image, store in S3
-    // convert base64ImageString to javascript file -> send to s3 to get transparent image url
   };
+
+  const handleSubmit = () => {
+    if (!image) {
+      console.log("Please add an image :)");
+    } else if (rembgIsLoading || (image && !transparentImage)) {
+      console.log("Please wait until the image is done processing :)");
+    } else {
+      console.log("Redirect");
+      // delete all old AWS images except last
+      // submitData -> latest AWS link + form data
+      // redirect to Wardrobe page.
+    }
+  };
+
+  // if (rembgInProgress) {
+  // render "Processing..." under image
+  // } else {
+  // render "Complete!" under image
+  // handleSubmit()
+  // }
+
+  // If the user tries to submit and rembg is still in progress, give them an error.
+  // if (rembgInProgress && didSubmit) {
+  // render error if user tries to submit -> Please wait until image is done processing
+  // }
+  // If the user tries to submit and rembg is completed, let them run submit f(x).
+  //else if (!rembgInProgress && didSubmit) {
+  // handleSubmit()
+  // }
 
   return (
     <main>
@@ -214,9 +248,11 @@ export default function Looks() {
         </ReactCrop>
       </div>
 
-      {test ? <img src={test} /> : ""}
       {transparentImage ? <img src={transparentImage} /> : ""}
-      {testFile ? <img src={testFile} /> : ""}
+      {transparentImage ? <p>Complete!</p> : ""}
+
+      {/* If rembg is processing, then render a processing indicator. */}
+      {rembgIsLoading ? <p>Processing...</p> : ""}
 
       {!image ? (
         <div {...getRootProps({ className: "dropzone" })}>
@@ -228,6 +264,8 @@ export default function Looks() {
       ) : (
         ""
       )}
+
+      {/* form component here */}
 
       <button onClick={handleSubmit}>Submit</button>
     </main>
