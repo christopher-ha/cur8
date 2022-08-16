@@ -16,6 +16,7 @@ import Link from "next/link";
 import Head from "next/head";
 // import styles from "@/components/Models/Models.module.scss";
 import styles from "@/components/Upload/Upload.module.scss";
+import CreateWardrobeItem from "@/components/Forms/CreateWardrobeItem/CreateWardrobeItem";
 
 export default function Looks() {
   // react-image-crop
@@ -46,7 +47,13 @@ export default function Looks() {
 
   useEffect(() => {
     // Prevents useEffect from triggering on load -> if there is no cropped area, don't run the post function.
-    if (croppedImageURL !== null) {
+    if (image !== null) {
+      const identifier = setTimeout(() => {
+        console.log("POST");
+        setRembgIsLoading(true);
+        handleRembg();
+      }, 4000);
+    } else if ((image !== null) & (croppedImageURL !== null)) {
       const identifier = setTimeout(() => {
         console.log("POST");
         setRembgIsLoading(true);
@@ -58,7 +65,7 @@ export default function Looks() {
       clearTimeout(identifier);
       setRembgIsLoading(false);
     };
-  }, [croppedImageURL]);
+  }, [croppedImageURL, image]);
 
   useEffect(() => {}, []);
 
@@ -77,12 +84,12 @@ export default function Looks() {
   // Handles cropping, returns image url from getCroppedImg
   const makeClientCrop = async (crop) => {
     if ((image, crop.width && crop.height)) {
-      const croppedImg = await getCroppedImg(
+      const croppedImage = await getCroppedImg(
         imgRef.current,
         crop,
         "newFile.jpeg"
       );
-      setCroppedImageURL(croppedImg);
+      setCroppedImageURL(croppedImage);
     }
   };
   // Logic for getting the cropped area as an image url
@@ -143,17 +150,29 @@ export default function Looks() {
 
   // rembg integration
   const handleRembg = async (event) => {
-    // Start the rembg progress, mark it as in progress (true).
-    // 1. Convert croppedImageURL to file
     console.log(croppedImageURL);
-    let file = await new File([croppedImageURL], `image_${Date.now()}.jpeg`, {
-      type: "image/jpeg",
-      lastModified: Date.now(),
-    });
+
+    // 1. Convert croppedImageURL to file
+    // Define variable outside of the if / else so we can use it outside of the statement.
+    let file;
+
+    // if the user has a croppedImageURL, create a file with croppedImageURL
+    if (croppedImageURL) {
+      file = await new File([croppedImageURL], `image_${Date.now()}.jpeg`, {
+        type: "image/jpeg",
+        lastModified: Date.now(),
+      });
+      // if the user only has an image ( no crop ) -> create a file with image state only.
+    } else {
+      file = await new File([image], `image_${Date.now()}.jpeg`, {
+        type: "image/jpeg",
+        lastModified: Date.now(),
+      });
+    }
 
     // setTest(URL.createObjectURL(file));
 
-    // 2. Upload file to S3 (croppedImgURL to file)
+    // 2. Upload file to S3 (croppedImageURL to file)
     const imageS3 = await uploadS3(file);
     console.log("Original S3 Image URL:", imageS3);
 
@@ -206,7 +225,7 @@ export default function Looks() {
   const handleSubmit = () => {
     if (!image) {
       console.log("Please add an image :)");
-    } else if (rembgIsLoading || (image && !transparentImage)) {
+    } else if (rembgIsLoading) {
       console.log("Please wait until the image is done processing :)");
     } else {
       console.log("Redirect");
@@ -266,6 +285,7 @@ export default function Looks() {
       )}
 
       {/* form component here */}
+      <CreateWardrobeItem />
 
       <button onClick={handleSubmit}>Submit</button>
     </main>
