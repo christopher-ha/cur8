@@ -3,7 +3,11 @@ import { useRouter } from "next/router";
 import styles from "@/components/Forms/Form.module.scss";
 import axios from "axios";
 
-export default function CreateWardrobeItem() {
+export default function CreateWardrobeItem({ transparentImageURLs }) {
+  console.group("transparentImageURLs ");
+  console.log(transparentImageURLs);
+  console.groupEnd();
+
   // Initialize next-router
   const router = useRouter();
 
@@ -86,19 +90,14 @@ export default function CreateWardrobeItem() {
               {...register("category", {
                 required: "select one option",
               })}
+              defaultValue={""}
             >
+              <option value="" disabled hidden></option>
               <option value="tops">Tops</option>
               <option value="bottoms">Bottoms</option>
               <option value="shoes">Shoes</option>
               <option value="accessory">Accessory</option>
             </select>
-            {/* <input
-              className={`${styles.formGroup__input}`}
-              type="date"
-              placeholder="-"
-              // tabIndex="-1"
-              {...register("date", { required: false })}
-            /> */}
           </div>
         </form>
       </div>

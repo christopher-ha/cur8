@@ -119,10 +119,11 @@ select {
   appearance: none;
   -webkit-appearance: none; /* turn off drop-down arrow*/
   -moz-appearance: none;
-  text-align: center;
-  text-align: -webkit-center;
-  text-align: -moz-center;
-  text-align-last: center;
+
+  // Removes left padding
+  display: block;
+  padding: 0;
+
   // Additional resets for further consistency
   background-color: transparent;
   border: none;
