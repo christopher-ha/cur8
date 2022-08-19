@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 import UploadImages from "@/components/Upload/Upload";
 import Header from "@/components/Header/Header";
-import styles from "@/components/Moodboard/Moodboard.module.scss";
+import styles from "@/styles/pages/Moodboard.module.scss";
 import { prisma } from "@/utils/db";
 import Head from "next/head";
 import axios from "axios";

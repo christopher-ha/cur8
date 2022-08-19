@@ -6,7 +6,7 @@ import Header from "@/components/Header/Header";
 import Modal from "react-modal";
 import Link from "next/link";
 import Head from "next/head";
-import styles from "@/components/Models/Models.module.scss";
+import styles from "@/styles/pages/Models.module.scss";
 
 const modalStyle = {
   overlay: {

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import styles from "@/components/VerifyRequest/VerifyRequest.module.scss";
+import styles from "@/styles/pages/VerifyRequest.module.scss";
 
 export default function verifyRequest({ baseUrl }) {
   return (

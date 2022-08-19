@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 // import { prisma } from "@/utils/db";
 import { getSession } from "next-auth/react";
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import ReactCrop, {
   centerCrop,
@@ -10,13 +10,12 @@ import ReactCrop, {
   PixelCrop,
 } from "react-image-crop";
 import axios from "axios";
-import Header from "@/components/Header/Header";
+import Head from "next/head";
 import Modal from "react-modal";
 import Link from "next/link";
-import Head from "next/head";
-// import styles from "@/components/Models/Models.module.scss";
-import styles from "@/components/Upload/Upload.module.scss";
+import Header from "@/components/Header/Header";
 import CreateWardrobeItem from "@/components/Forms/CreateWardrobeItem/CreateWardrobeItem";
+import styles from "@/components/Upload/Upload.module.scss";
 
 export default function Looks({ campaignId }) {
   // react-image-crop

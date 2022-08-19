@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import Head from "next/head";
-import styles from "@/components/Home/Home.module.scss";
+import styles from "@/styles/pages/Home.module.scss";
 import { useRouter } from "next/router";
 
 export default function Home() {
