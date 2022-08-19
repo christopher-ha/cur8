@@ -18,7 +18,7 @@ import Head from "next/head";
 import styles from "@/components/Upload/Upload.module.scss";
 import CreateWardrobeItem from "@/components/Forms/CreateWardrobeItem/CreateWardrobeItem";
 
-export default function Looks() {
+export default function Looks({ campaignId }) {
   // react-image-crop
   const [image, setImage] = useState(null);
   const [imageURL, setImageURL] = useState();
@@ -186,7 +186,7 @@ export default function Looks() {
     console.log("Original S3 Image URL:", imageS3);
 
     const response = await axios.post(
-      "/api/wardrobe",
+      "/api/rembg",
       {
         file: imageS3,
       },
@@ -228,35 +228,6 @@ export default function Looks() {
     setRembgIsLoading(false);
   };
 
-  // const handleSubmit = () => {
-  //   if (!image) {
-  //     console.log("Please add an image :)");
-  //   } else if (rembgIsLoading) {
-  //     console.log("Please wait until the image is done processing :)");
-  //   } else {
-  //     console.log("Redirect");
-  //     // delete all old AWS images except last
-  //     // submitData -> latest AWS link + form data
-  //     // redirect to Wardrobe page.
-  //   }
-  // };
-
-  // if (rembgInProgress) {
-  // render "Processing..." under image
-  // } else {
-  // render "Complete!" under image
-  // handleSubmit()
-  // }
-
-  // If the user tries to submit and rembg is still in progress, give them an error.
-  // if (rembgInProgress && didSubmit) {
-  // render error if user tries to submit -> Please wait until image is done processing
-  // }
-  // If the user tries to submit and rembg is completed, let them run submit f(x).
-  //else if (!rembgInProgress && didSubmit) {
-  // handleSubmit()
-  // }
-
   return (
     <main>
       <Head>
@@ -291,13 +262,23 @@ export default function Looks() {
       )}
 
       {/* form component here */}
-      <CreateWardrobeItem transparentImageURLs={transparentImageURLs} />
+      <CreateWardrobeItem
+        transparentImageURLs={transparentImageURLs}
+        campaignId={campaignId}
+      />
 
       {/* <button onClick={handleSubmit}>Submit</button> */}
     </main>
   );
 }
 
-// check for current url -> find campaign id
-// add item with transparnet image to wardrobe with rest of info (brand, description, size, etc.)
-// store to db
+export async function getServerSideProps(context) {
+  const { params, req, res } = context;
+  const { campaignId } = params;
+
+  return {
+    props: {
+      campaignId: JSON.parse(JSON.stringify(campaignId)),
+    },
+  };
+}

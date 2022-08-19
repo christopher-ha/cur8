@@ -3,11 +3,10 @@ import { useRouter } from "next/router";
 import styles from "@/components/Forms/Form.module.scss";
 import axios from "axios";
 
-export default function CreateWardrobeItem({ transparentImageURLs }) {
-  console.group("transparentImageURLs ");
-  console.log(transparentImageURLs);
-  console.groupEnd();
-
+export default function CreateWardrobeItem({
+  transparentImageURLs,
+  campaignId,
+}) {
   // Initialize next-router
   const router = useRouter();
 
@@ -19,20 +18,36 @@ export default function CreateWardrobeItem({ transparentImageURLs }) {
     reset,
   } = useForm();
 
+  // Get the last image url in the array
+  const finalTransparentImage = transparentImageURLs.slice(-1);
+  console.group("transparentImageURLs ");
+  console.log(transparentImageURLs);
+  console.log(finalTransparentImage);
+  console.log(campaignId);
+  console.groupEnd();
+
   const submitData = async (formData, e) => {
-    console.log(formData);
-    // axios
-    //   .post("/api/wardrobe", {
-    //     formData,
-    //   })
-    //   .then((response) => {
-    //     console.log(response);
-    //     // Redirect to create campaign page after info has been submitted.
-    //     router.push("/campaigns");
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
+    // pop it out of the array to get the string
+    console.log(router);
+    const data = {
+      ...formData,
+      url: finalTransparentImage.pop(),
+      campaignId: campaignId,
+    };
+    console.log("data:", data);
+
+    axios
+      .post("/api/wardrobe", {
+        data,
+      })
+      .then((response) => {
+        console.log(response);
+        // Redirect to the campaign's wardrobe page after completion.
+        router.push(`/campaigns/${campaignId}/wardrobe`);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (
