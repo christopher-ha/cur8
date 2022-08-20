@@ -4,9 +4,9 @@ import CreateCampaign from "@/components/Forms/CreateCampaign/CreateCampaign";
 import Header from "@/components/Header/Header";
 import { getSession } from "next-auth/react";
 
-export default function Campaign() {
+export default function CampaignCreate() {
   const router = useRouter();
-  const campaignId = router.query.campaignId;
+  // const campaignId = router.query.campaignId;
   return (
     <>
       <Head>

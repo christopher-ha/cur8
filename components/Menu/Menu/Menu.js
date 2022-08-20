@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 
 export default function Menu() {
   const { asPath, basePath, pathname, query } = useRouter();
-  const router = useRouter();
   console.log("---------------");
   console.log("asPath:", asPath);
   console.log("basePath:", basePath);

@@ -17,7 +17,7 @@ import Header from "@/components/Header/Header";
 import CreateWardrobeItem from "@/components/Forms/CreateWardrobeItem/CreateWardrobeItem";
 import styles from "@/components/Upload/Upload.module.scss";
 
-export default function Looks({ campaignId }) {
+export default function WardrobeCreate() {
   // react-image-crop
   const [image, setImage] = useState(null);
   const [imageURL, setImageURL] = useState();
@@ -31,6 +31,10 @@ export default function Looks({ campaignId }) {
   const [transparentImageURLs, setTransparentImageURLs] = useState([]);
   const [rembgIsLoading, setRembgIsLoading] = useState(false);
   const [didSubmit, setDidSubmit] = useState(false);
+
+  // next.js router -> get campaignId from url
+  const { asPath, basePath, pathname, query } = useRouter();
+  console.log(query.campaignId);
 
   // react-dropzone
   const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
@@ -79,20 +83,18 @@ export default function Looks({ campaignId }) {
     };
   }, [croppedImageURL, image]);
 
-  useEffect(() => {}, []);
-
   // react-image-crop
   // Sets dimensions of cropped area
-  function onImageLoad(event) {
+  const onImageLoad = (event) => {
     if (aspect) {
       const { width, height } = event.currentTarget;
       setCrop(centerAspectCrop(width, height, aspect));
     }
-  }
+  };
   // Once the area is selected, run the makeClientCrop using the cropped area as a paramter to get the image data from that selected area.
-  function imageCropComplete(crop) {
+  const imageCropComplete = (crop) => {
     makeClientCrop(crop);
-  }
+  };
   // Handles cropping, returns image url from getCroppedImg
   const makeClientCrop = async (crop) => {
     if ((image, crop.width && crop.height)) {
@@ -230,9 +232,9 @@ export default function Looks({ campaignId }) {
   return (
     <main>
       <Head>
-        <title>Looks Builder</title>
+        <title>Wardrobe — Add Item</title>
       </Head>
-      <Header title={"Looks Builder"} />
+      <Header title={"Wardrobe"} />
       <div>
         <ReactCrop
           crop={crop}
@@ -263,21 +265,19 @@ export default function Looks({ campaignId }) {
       {/* form component here */}
       <CreateWardrobeItem
         transparentImageURLs={transparentImageURLs}
-        campaignId={campaignId}
+        campaignId={query.campaignId}
       />
-
-      {/* <button onClick={handleSubmit}>Submit</button> */}
     </main>
   );
 }
 
-export async function getServerSideProps(context) {
-  const { params, req, res } = context;
-  const { campaignId } = params;
+// export async function getServerSideProps(context) {
+//   const { params, req, res } = context;
+//   const { campaignId } = params;
 
-  return {
-    props: {
-      campaignId: JSON.parse(JSON.stringify(campaignId)),
-    },
-  };
-}
+//   return {
+//     props: {
+//       campaignId: JSON.parse(JSON.stringify(campaignId)),
+//     },
+//   };
+// }

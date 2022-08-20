@@ -27,7 +27,7 @@ export default function CreateWardrobeItem({
   console.groupEnd();
 
   const submitData = async (formData, e) => {
-    // pop it out of the array to get the string
+    // pop() finalTransparentImage out of array to get only the string
     console.log(router);
     const data = {
       ...formData,

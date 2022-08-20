@@ -33,10 +33,11 @@ const modalStyle = {
 
 Modal.setAppElement("#__next");
 
-export default function Models({ wardrobe }) {
+export default function Wardrobe({ wardrobe, campaginId }) {
   // items is our wardrobe data, default to the original dataset.
   const [items, setItems] = useState(wardrobe);
   const [modalIsOpen, setIsOpen] = useState(false);
+  const { asPath, basePath, pathname, query } = useRouter();
 
   function openModal() {
     setIsOpen(true);
@@ -59,7 +60,7 @@ export default function Models({ wardrobe }) {
   return (
     <main className={`${modalIsOpen === true ? "blur" : ""}`}>
       <Head>
-        <title>Models</title>
+        <title>Wardrobe</title>
       </Head>
       <Header title={"Wardrobe"} />
 
@@ -125,7 +126,9 @@ export default function Models({ wardrobe }) {
               </h4>
             );
           })}
-          <h4 className="meatball__add">+ ADD A NEW ITEM</h4>
+          <Link href={`${asPath}/create`}>
+            <h4 className="meatball__add">+ ADD A NEW ITEM</h4>
+          </Link>
         </div>
         <div>
           <img
@@ -156,6 +159,7 @@ export async function getServerSideProps(context) {
   return {
     props: {
       wardrobe: JSON.parse(JSON.stringify(wardrobe)),
+      campaignId: campaignId,
     },
   };
 }
