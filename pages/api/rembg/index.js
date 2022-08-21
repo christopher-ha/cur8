@@ -20,8 +20,6 @@ async function rembg(req, res) {
       .then((response) => {
         return res.status(200).send(response.data);
       });
-    // return res.status(200).json(rembgFile, { success: true });
-    // return res.status(200).send(rembgFile);
   } catch (error) {
     console.error("Request error", error);
     res.status(500).json({ error: "Error using rembg", success: false });

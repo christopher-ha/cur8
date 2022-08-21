@@ -19,10 +19,11 @@ import styles from "@/components/Upload/Upload.module.scss";
 
 export default function WardrobeCreate() {
   // react-image-crop
-  const [image, setImage] = useState(null);
-  const [imageURL, setImageURL] = useState();
   const imgRef = useRef();
   const previewCanvasRef = useRef();
+
+  const [image, setImage] = useState(null);
+  const [imageURL, setImageURL] = useState();
   const [crop, setCrop] = useState();
   const [croppedImageURL, setCroppedImageURL] = useState(null);
   const [aspect, setAspect] = useState(0);
@@ -30,7 +31,7 @@ export default function WardrobeCreate() {
 
   const [transparentImageURLs, setTransparentImageURLs] = useState([]);
   const [rembgIsLoading, setRembgIsLoading] = useState(false);
-  const [didSubmit, setDidSubmit] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   // next.js router -> get campaignId from url
   const { asPath, basePath, pathname, query } = useRouter();
@@ -229,28 +230,54 @@ export default function WardrobeCreate() {
     setRembgIsLoading(false);
   };
 
+  const checkSubmit = (event) => {
+    setHasSubmitted(true);
+
+    // Set the state back to false after 3 seconds so the user can re-submit.
+    const reset = setTimeout(() => {
+      setHasSubmitted(false);
+    }, 3000);
+
+    return () => {
+      clearInterval(reset);
+    };
+  };
+
+  // if user has submitted and rembginprogress is true, make the button click do nothing. and render a message on screen
+  //
+
   return (
     <main>
       <Head>
         <title>Wardrobe — Add Item</title>
       </Head>
       <Header title={"Wardrobe"} />
-      <div>
+      <div className={!image ? styles.hidden : styles.crop}>
         <ReactCrop
           crop={crop}
           onChange={(c) => setCrop(c)}
           onComplete={imageCropComplete}
         >
-          <img src={imageURL} onLoad={onImageLoad} ref={imgRef} />
+          <img
+            className={styles.preview}
+            src={imageURL}
+            onLoad={onImageLoad}
+            ref={imgRef}
+          />
         </ReactCrop>
       </div>
-
       {/* {transparentImage ? <img src={transparentImage} /> : ""} */}
-
       {/* If rembg is processing, then render a processing indicator. */}
-      {rembgIsLoading ? <p>Processing...</p> : ""}
-      {transparentImage ? <p>Complete!</p> : ""}
+      {/* {rembgIsLoading ? <p>Processing...</p> : ""}
+      {rembgIsLoading === false && transparentImage ? <p>Complete!</p> : ""} */}
 
+      {hasSubmitted && rembgIsLoading ? (
+        <p>Try again in a few seconds...</p>
+      ) : (
+        ""
+      )}
+      {/* //rembgisloading and submitted */}
+      {/* If there is no image, render the add image dropzone */}
       {!image ? (
         <div {...getRootProps({ className: "dropzone" })}>
           <input type="file" name="file" {...getInputProps()} />
@@ -261,11 +288,12 @@ export default function WardrobeCreate() {
       ) : (
         ""
       )}
-
       {/* form component here */}
       <CreateWardrobeItem
         transparentImageURLs={transparentImageURLs}
         campaignId={query.campaignId}
+        rembgIsLoading={rembgIsLoading}
+        checkSubmit={checkSubmit}
       />
     </main>
   );

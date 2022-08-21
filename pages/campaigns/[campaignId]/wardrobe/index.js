@@ -74,8 +74,8 @@ export default function Wardrobe({ wardrobe, campaginId }) {
                 alt={item.description}
               />
               <div className={styles.wardrobe__text}>
-                <h5>{item.brand}</h5>
-                <p>
+                <h5 className={styles.wardrobe__brand}>{item.brand}</h5>
+                <p className={styles.wardrobe__description}>
                   {item.description} — {item.size}
                 </p>
               </div>

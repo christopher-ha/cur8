@@ -6,6 +6,8 @@ import axios from "axios";
 export default function CreateWardrobeItem({
   transparentImageURLs,
   campaignId,
+  rembgIsLoading,
+  checkSubmit,
 }) {
   // Initialize next-router
   const router = useRouter();
@@ -20,15 +22,17 @@ export default function CreateWardrobeItem({
 
   // Get the last image url in the array
   const finalTransparentImage = transparentImageURLs.slice(-1);
+
   console.group("transparentImageURLs ");
-  console.log(transparentImageURLs);
-  console.log(finalTransparentImage);
-  console.log(campaignId);
+  console.log("array", transparentImageURLs);
+  console.log("final", finalTransparentImage);
   console.groupEnd();
 
   const submitData = async (formData, e) => {
-    // pop() finalTransparentImage out of array to get only the string
-    console.log(router);
+    // if (rembgIsLoading) {
+    //   return console.log("Wait a few seconds");
+    // }
+
     const data = {
       ...formData,
       url: finalTransparentImage.pop(),
@@ -36,18 +40,30 @@ export default function CreateWardrobeItem({
     };
     console.log("data:", data);
 
-    axios
-      .post("/api/wardrobe", {
+    try {
+      const response = await axios.post("/api/wardrobe", {
         data,
-      })
-      .then((response) => {
-        console.log(response);
-        // Redirect to the campaign's wardrobe page after completion.
-        router.push(`/campaigns/${campaignId}/wardrobe`);
-      })
-      .catch((error) => {
-        console.log(error);
       });
+
+      // If there is more than one result (ie. user crops multiple times)
+      if (transparentImageURLs.length > 1) {
+        // Remove the most recent item (the one we want to keep)
+        transparentImageURLs.pop();
+
+        // then map over the rest of the array and delete the items from S3 bucket
+        transparentImageURLs.map(async (url) => {
+          const responseAWS = await axios.delete("/api/s3", {
+            data: { key: new URL(url).pathname },
+          });
+          return responseAWS;
+        });
+      }
+
+      // Redirect to the campaign's wardrobe page after completion.
+      router.push(`/campaigns/${campaignId}/wardrobe`);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -68,7 +84,7 @@ export default function CreateWardrobeItem({
               type="text"
               placeholder="*"
               {...register("brand", {
-                required: "Enter a valid name",
+                required: "Which brand created your item?",
               })}
             />
           </div>
@@ -81,7 +97,7 @@ export default function CreateWardrobeItem({
               type="text"
               placeholder="*"
               {...register("description", {
-                required: "Enter a description of the item",
+                required: "What is the name of the item?",
               })}
             />
           </div>
@@ -103,7 +119,7 @@ export default function CreateWardrobeItem({
             <select
               className={styles.formGroup__input}
               {...register("category", {
-                required: "select one option",
+                required: "Select a category for your item.",
               })}
               defaultValue={""}
             >
@@ -117,14 +133,18 @@ export default function CreateWardrobeItem({
         </form>
       </div>
       <div className={styles.form__errors}>
-        <p>{errors?.name?.message}</p>
+        <p>{errors?.brand?.message}</p>
+        <p>{errors?.description?.message}</p>
+        <p>{errors?.category?.message}</p>
       </div>
       <button
+        onClick={checkSubmit}
         className={styles.form__button}
         form="create-campaign"
         type="submit"
+        // disabled={rembgIsLoading === true}
       >
-        Add Item
+        {rembgIsLoading ? "Processing..." : "Add Item"}
       </button>
     </main>
   );

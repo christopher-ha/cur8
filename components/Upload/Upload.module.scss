@@ -1,6 +1,7 @@
 @use "@/partials/abstracts/mixins" as *;
 @use "@/partials/abstracts/variables" as *;
 
+// moodboard page -> file picker buttons
 .upload {
   &__buttons {
     display: flex;
@@ -24,6 +25,11 @@
   }
 }
 
+// wardrobe page -> react-image-crop + react-dropzone
+.crop {
+  margin: 1rem;
+}
+
 .dropzone {
   display: flex;
   align-items: center;
@@ -32,4 +38,15 @@
   border: 0.75px solid $black;
   aspect-ratio: 1 / 1;
   margin: 1rem;
+}
+
+.preview {
+  width: 100vw;
+  object-fit: contain;
+  // aspect-ratio: 1 / 1;
+  border: 0.75px solid $black;
+}
+
+.hidden {
+  display: none;
 }
