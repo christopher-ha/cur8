@@ -3,12 +3,7 @@ import { useRouter } from "next/router";
 import { getSession } from "next-auth/react";
 import { useState, useRef, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
-import ReactCrop, {
-  centerCrop,
-  makeAspectCrop,
-  Crop,
-  PixelCrop,
-} from "react-image-crop";
+import ReactCrop from "react-image-crop";
 import axios from "axios";
 import Head from "next/head";
 import Modal from "react-modal";
@@ -108,24 +103,44 @@ export default function WardrobeCreate() {
     }
   };
   // Logic for getting the cropped area as an image url
-  const getCroppedImg = (sourceImage, crop, fileName) => {
+  const getCroppedImg = (image, crop, fileName) => {
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
     const canvas = document.createElement("canvas");
-    const scaleX = sourceImage.naturalWidth / sourceImage.width;
-    const scaleY = sourceImage.naturalHeight / sourceImage.height;
-    canvas.width = crop.width;
-    canvas.height = crop.height;
+
+    canvas.width = Math.ceil(crop.width * scaleX);
+    canvas.height = Math.ceil(crop.height * scaleY);
+
     const ctx = canvas.getContext("2d");
+
     ctx.drawImage(
-      sourceImage,
+      image,
       crop.x * scaleX,
       crop.y * scaleY,
       crop.width * scaleX,
       crop.height * scaleY,
       0,
       0,
-      crop.width,
-      crop.height
+      crop.width * scaleX,
+      crop.height * scaleY
     );
+    // const canvas = document.createElement("canvas");
+    // const scaleX = sourceImage.naturalWidth / sourceImage.width;
+    // const scaleY = sourceImage.naturalHeight / sourceImage.height;
+    // canvas.width = crop.width;
+    // canvas.height = crop.height;
+    // const ctx = canvas.getContext("2d");
+    // ctx.drawImage(
+    //   sourceImage,
+    //   crop.x * scaleX,
+    //   crop.y * scaleY,
+    //   crop.width * scaleX,
+    //   crop.height * scaleY,
+    //   0,
+    //   0,
+    //   crop.width,
+    //   crop.height
+    // );
 
     try {
       return new Promise((resolve) => {
@@ -255,7 +270,7 @@ export default function WardrobeCreate() {
       <div className={!image ? styles.hidden : styles.crop}>
         <ReactCrop
           crop={crop}
-          onChange={(c) => setCrop(c)}
+          onChange={(crop) => setCrop(crop)}
           onComplete={imageCropComplete}
         >
           <img
