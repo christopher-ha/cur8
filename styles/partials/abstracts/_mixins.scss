@@ -17,3 +17,11 @@
     @content;
   }
 }
+
+@mixin looksBlock {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $light-gray;
+  border: $border-width solid $black;
+}

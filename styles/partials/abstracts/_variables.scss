@@ -3,6 +3,8 @@ $mobile-breakpoint: 375px;
 $tablet-breakpoint: 768px;
 $desktop-breakpoint: 1280px;
 
+$mobile-grid-gap: 0.5rem;
+
 // Padding
 $p0: 4px;
 $p1: 8px;
@@ -15,3 +17,5 @@ $black: #333333;
 $white: #ffffff;
 $light-gray: #f2f2f2;
 $slate-gray: #d9d9d9;
+
+$border-width: 0.75px;
