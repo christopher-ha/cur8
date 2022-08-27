@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useRouter } from "next/router";
 import { prisma } from "@/utils/db";
 import { getSession } from "next-auth/react";
@@ -43,6 +44,12 @@ export default function Wardrobe({ wardrobe, models, campaginId }) {
   const [activeBlock, setActiveBlock] = useState();
   const { asPath, basePath, pathname, query } = useRouter();
 
+  const [face, setFace] = useState();
+  const [top, setTop] = useState();
+  const [bottom, setBottom] = useState();
+  const [shoes, setShoes] = useState();
+  const [accessory, setAccessory] = useState();
+
   function openModal() {
     setIsOpen(true);
   }
@@ -74,6 +81,45 @@ export default function Wardrobe({ wardrobe, models, campaginId }) {
     } else {
       return setItems(models);
     }
+  }
+
+  function handleSelected(item) {
+    console.log(activeBlock);
+    console.log(item);
+
+    switch (activeBlock) {
+      case "faces":
+        setFace(item.id);
+        break;
+      case "tops":
+        setTop(item.id);
+        break;
+      case "bottoms":
+        setBottom(item.id);
+        break;
+      case "shoes":
+        setShoes(item.id);
+        break;
+      case "accessory":
+        setAccessory(item.id);
+        break;
+    }
+
+    // if (activeBlock === "tops") {
+    //   setTop(id);
+    // }
+
+    // if (activeBlock === "bottoms") {
+    //   setBottom(id);
+    // }
+
+    // if (activeBlock === "shoes") {
+    //   setShoes(id);
+    // }
+
+    // if (activeBlock === "acccesory") {
+    //   setAccessory(id);
+    // }
   }
 
   return (
@@ -156,7 +202,14 @@ export default function Wardrobe({ wardrobe, models, campaginId }) {
           <div className={wardrobeStyles.wardrobe}>
             {items?.map((item) => {
               return (
-                <div className={wardrobeStyles.wardrobe__item} key={item.id}>
+                <div
+                  className={wardrobeStyles.wardrobe__item}
+                  key={item.id}
+                  onClick={() => {
+                    handleSelected(item);
+                    closeModal();
+                  }}
+                >
                   <img
                     className={wardrobeStyles.wardrobe__image}
                     src={item.url}
@@ -179,7 +232,14 @@ export default function Wardrobe({ wardrobe, models, campaginId }) {
           <div className={wardrobeStyles.wardrobe}>
             {models?.map((model) => {
               return (
-                <div className={wardrobeStyles.wardrobe__item} key={model.id}>
+                <div
+                  className={wardrobeStyles.wardrobe__item}
+                  key={model.id}
+                  onClick={() => {
+                    handleSelected(model);
+                    closeModal();
+                  }}
+                >
                   <img
                     className={wardrobeStyles.wardrobe__image}
                     src={model.urlFace}
