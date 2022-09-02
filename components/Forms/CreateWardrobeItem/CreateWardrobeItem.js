@@ -126,6 +126,7 @@ export default function CreateWardrobeItem({
               <option value="" disabled hidden></option>
               <option value="tops">Tops</option>
               <option value="bottoms">Bottoms</option>
+              <option value="dress">Dress</option>
               <option value="shoes">Shoes</option>
               <option value="accessory">Accessory</option>
             </select>

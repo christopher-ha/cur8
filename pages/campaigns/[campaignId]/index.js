@@ -16,7 +16,8 @@ export default function Campaign() {
         className={styles.menu__back}
         src="/icons/back-arrow.svg"
         alt="Back Arrow"
-        onClick={() => router.back()}
+        // onClick={() => router.back()}
+        onClick={() => router.push("/campaigns")}
       ></img>
       <Menu />
     </div>

@@ -1,7 +1,7 @@
-import { useRouter } from "next/router";
 import { prisma } from "@/utils/db";
 import { getSession } from "next-auth/react";
-import { useState, useCallback } from "react";
+import { useRouter } from "next/router";
+import { useState, useCallback, useEffect } from "react";
 import Header from "@/components/Header/Header";
 import Modal from "react-modal";
 import Link from "next/link";
@@ -34,6 +34,9 @@ const modalStyle = {
 Modal.setAppElement("#__next");
 
 export default function Models({ models }) {
+  const router = useRouter();
+  const { asPath, basePath, pathname, query } = useRouter();
+
   const [model, setModel] = useState();
   const [modalIsOpen, setIsOpen] = useState(false);
 
@@ -54,91 +57,107 @@ export default function Models({ models }) {
   // Selected Model, or default to first model in list.
   const selectedModel = findModel(model)[0] || models[0];
 
+  // If there are no models (means it's the user's first time here) redirect to the add model page -- https://nextjs.org/docs/messages/no-router-instance
+  useEffect(() => {
+    if (models.length === 0) {
+      router.push(`${asPath}/create`);
+    }
+  }, [models]);
+
   return (
     <main className={`${modalIsOpen === true ? "blur" : ""}`}>
+      {/* // if modal is open, add blur class */}
+
       <Head>
         <title>Models</title>
       </Head>
       <Header title={"Models"} />
-      {/* <p>{model}</p> */}
 
-      {/* // if modal is open, add blur class */}
-      <div className={`container`}>
-        <div className={styles.images}>
-          {/* Keep the images wrapped in a div or else it will stretch on Safari. */}
-          <div>
-            <img
-              className={styles.image}
-              src={selectedModel.urlFace}
-              alt={`${selectedModel.name}'s Face`}
-            />
+      {selectedModel ? (
+        <div className={`container`}>
+          <div className={styles.images}>
+            {/* Keep the images wrapped in a div or else it will stretch on Safari. */}
+            <div>
+              <img
+                className={styles.image}
+                src={selectedModel.urlFace}
+                alt={`${selectedModel.name}'s Face`}
+              />
+            </div>
+            <div>
+              <img
+                className={styles.image}
+                src={selectedModel.urlBody}
+                alt={`${selectedModel.name}'s Body`}
+              />
+            </div>
           </div>
-          <div>
-            <img
-              className={styles.image}
-              src={selectedModel.urlBody}
-              alt={`${selectedModel.name}'s Body`}
-            />
-          </div>
+          <table className={styles.table}>
+            <tbody>
+              <tr className={styles.table__row}>
+                <td className={styles.table__label}>Name</td>
+                <td className={styles.table__info}>{selectedModel.name}</td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Instagram</td>
+                <td className={styles.table__info}>
+                  {selectedModel.instagram}
+                </td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Agency</td>
+                <td className={styles.table__info}>{selectedModel.agency}</td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Contact</td>
+                <td className={styles.table__info}>{selectedModel.contact}</td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>
+                  <br></br>
+                </td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Height</td>
+                <td className={styles.table__info}>
+                  {selectedModel.height} CM
+                </td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Bust</td>
+                <td className={styles.table__info}>{selectedModel.bust} CM</td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Waist</td>
+                <td className={styles.table__info}>{selectedModel.waist} CM</td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Hip</td>
+                <td className={styles.table__info}>{selectedModel.hip} CM</td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Shoe</td>
+                <td className={styles.table__info}>{selectedModel.shoe} US</td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Dress</td>
+                <td className={styles.table__info}>{selectedModel.dress} US</td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Hair</td>
+                <td className={styles.table__info}>{selectedModel.hair}</td>
+              </tr>
+              <tr>
+                <td className={styles.table__label}>Eyes</td>
+                <td className={styles.table__info}>{selectedModel.eyes}</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <table className={styles.table}>
-          <tbody>
-            <tr className={styles.table__row}>
-              <td className={styles.table__label}>Name</td>
-              <td className={styles.table__info}>{selectedModel.name}</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Instagram</td>
-              <td className={styles.table__info}>{selectedModel.instagram}</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Agency</td>
-              <td className={styles.table__info}>{selectedModel.agency}</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Contact</td>
-              <td className={styles.table__info}>{selectedModel.contact}</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>
-                <br></br>
-              </td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Height</td>
-              <td className={styles.table__info}>{selectedModel.height} CM</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Bust</td>
-              <td className={styles.table__info}>{selectedModel.bust} CM</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Waist</td>
-              <td className={styles.table__info}>{selectedModel.waist} CM</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Hip</td>
-              <td className={styles.table__info}>{selectedModel.hip} CM</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Shoe</td>
-              <td className={styles.table__info}>{selectedModel.shoe} US</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Dress</td>
-              <td className={styles.table__info}>{selectedModel.dress} US</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Hair</td>
-              <td className={styles.table__info}>{selectedModel.hair}</td>
-            </tr>
-            <tr>
-              <td className={styles.table__label}>Eyes</td>
-              <td className={styles.table__info}>{selectedModel.eyes}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      ) : (
+        ""
+      )}
+
       <div>
         <img
           className="meatball__toggle"

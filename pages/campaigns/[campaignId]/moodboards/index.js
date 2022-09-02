@@ -9,13 +9,14 @@ import Head from "next/head";
 export default function Moodboards({ moodboards }) {
   const { asPath } = useRouter();
   // console.log(asPath);
-  // console.log(moodboards);
+  console.log(moodboards);
   return (
     <main>
       <Head>
         <title>Moodboards</title>
       </Head>
       <Header title={"Moodboards"} />
+
       <section className={styles.container}>
         {moodboards.map((moodboard) => (
           <Link
@@ -28,6 +29,9 @@ export default function Moodboards({ moodboards }) {
             </div>
           </Link>
         ))}
+        <div className={styles.block}>
+          <h4 className={styles.block__title}>+ CREATE MOODBOARD </h4>
+        </div>
       </section>
     </main>
   );

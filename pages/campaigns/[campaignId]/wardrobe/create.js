@@ -33,7 +33,14 @@ export default function WardrobeCreate() {
   console.log(query.campaignId);
 
   // react-dropzone
-  const { acceptedFiles, getRootProps, getInputProps } = useDropzone();
+  const { acceptedFiles, getRootProps, getInputProps } = useDropzone({
+    maxFiles: 1,
+    accept: {
+      "image/png": [".png"],
+      "image/jpeg": [".jpeg"],
+      "image/jpg": [".jpg"],
+    },
+  });
 
   // react-dropzone -> these are the files that were dropped or selected.
   useEffect(() => {
@@ -275,6 +282,7 @@ export default function WardrobeCreate() {
         >
           <img
             className={styles.preview}
+            alt="Crop Preview"
             src={imageURL}
             onLoad={onImageLoad}
             ref={imgRef}

@@ -60,7 +60,7 @@ export default function Images({ content }) {
     }
   };
 
-  // console.log(content);
+  console.log(content);
 
   return (
     <main>
@@ -68,65 +68,77 @@ export default function Images({ content }) {
         <title>Moodboard</title>
       </Head>
       <Header title={"Moodboard"} />
-      <div className={styles.moodboard}>
-        {/* Map over the images stored in database */}
-        {content.map((image) => {
-          if (image.url) {
-            return (
-              <div key={image.id} className={styles.moodboard__item}>
-                <img
-                  className={styles.moodboard__image}
-                  src={image.url}
-                  alt={image.text}
-                  onClick={() => {
-                    showOptions(image.id, image.url);
-                  }}
-                />
-                {/* We set the state of selected onClick, so when we click one and it triggers a match to the image id, show the options. Only if the toggle is set to true, then we show options. Without this toggle, the edit buttons will always be there and have no state that breaks the condition. */}
-                {selected?.id === image.id && isActive === true ? (
-                  <div className={styles.moodboard__image__options}>
-                    <h4 className={styles.moodboard__image__option}>Edit</h4>
-                    <h4
-                      className={styles.moodboard__image__option}
-                      onClick={handleDelete}
-                    >
-                      Delete
-                    </h4>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-            );
-          } else {
-            return (
-              <div key={image.id}>
-                <p
-                  className={styles.moodboard__text}
-                  onClick={() => {
-                    showOptions(image.id);
-                  }}
-                >
-                  {image.text}
-                </p>
-                {selected?.id === image.id && isActive === true ? (
-                  <div className={styles.moodboard__image__options}>
-                    <h4 className={styles.moodboard__image__option}>Edit</h4>
-                    <h4
-                      className={styles.moodboard__image__option}
-                      onClick={handleDelete}
-                    >
-                      Delete
-                    </h4>
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-            );
-          }
-        })}
-      </div>
+      {content.length > 0 ? (
+        <div className={styles.moodboard}>
+          {/* Map over the images stored in database */}
+          {content.map((image) => {
+            if (image.url) {
+              return (
+                <div key={image.id} className={styles.moodboard__item}>
+                  <img
+                    className={styles.moodboard__image}
+                    src={image.url}
+                    alt={image.text}
+                    onClick={() => {
+                      showOptions(image.id, image.url);
+                    }}
+                  />
+                  {/* We set the state of selected onClick, so when we click one and it triggers a match to the image id, show the options. Only if the toggle is set to true, then we show options. Without this toggle, the edit buttons will always be there and have no state that breaks the condition. */}
+                  {selected?.id === image.id && isActive === true ? (
+                    <div className={styles.moodboard__image__options}>
+                      <h4 className={styles.moodboard__image__option}>Edit</h4>
+                      <h4
+                        className={styles.moodboard__image__option}
+                        onClick={handleDelete}
+                      >
+                        Delete
+                      </h4>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
+            } else {
+              return (
+                <div key={image.id}>
+                  <p
+                    className={styles.moodboard__text}
+                    onClick={() => {
+                      showOptions(image.id);
+                    }}
+                  >
+                    {image.text}
+                  </p>
+                  {selected?.id === image.id && isActive === true ? (
+                    <div className={styles.moodboard__image__options}>
+                      <h4 className={styles.moodboard__image__option}>Edit</h4>
+                      <h4
+                        className={styles.moodboard__image__option}
+                        onClick={handleDelete}
+                      >
+                        Delete
+                      </h4>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
+              );
+            }
+          })}
+        </div>
+      ) : (
+        <div>
+          <p>You can add images in many ways </p>
+          <p>File Picker</p>
+          <p>Copy & Paste</p>
+          <p>Drag & Drop</p>
+          <p>Screenshots</p>
+          <p>Image URLs</p>
+        </div>
+      )}
+
       <UploadImages />
     </main>
   );

@@ -37,7 +37,7 @@ const modalStyle = {
 
 Modal.setAppElement("#__next");
 
-export default function Wardrobe({ wardrobe, models, campaginId }) {
+export default function LooksBuilder({ wardrobe, models, savedLooks }) {
   // items is our wardrobe data, default to the original dataset.
   const [items, setItems] = useState();
   const [modalIsOpen, setIsOpen] = useState(false);
@@ -59,6 +59,9 @@ export default function Wardrobe({ wardrobe, models, campaginId }) {
   function closeModal() {
     setIsOpen(false);
   }
+
+  console.log(savedLooks);
+  // console.log(items);
 
   // Since we are running two functions that take the same param, it was easier to combine them into one onClick.
   async function handleActive(category) {
@@ -104,22 +107,6 @@ export default function Wardrobe({ wardrobe, models, campaginId }) {
         setAccessory(item.id);
         break;
     }
-
-    // if (activeBlock === "tops") {
-    //   setTop(id);
-    // }
-
-    // if (activeBlock === "bottoms") {
-    //   setBottom(id);
-    // }
-
-    // if (activeBlock === "shoes") {
-    //   setShoes(id);
-    // }
-
-    // if (activeBlock === "acccesory") {
-    //   setAccessory(id);
-    // }
   }
 
   return (
@@ -294,10 +281,29 @@ export async function getServerSideProps(context) {
     },
   });
 
+  const savedLooks = await prisma.savedLooks.findMany({
+    where: {
+      campaignId: campaignId,
+    },
+    include: {
+      top: {
+        select: {
+          url: true,
+        },
+      },
+      bottom: true,
+      shoes: true,
+      accessory1: true,
+      accessory2: true,
+      models: true,
+    },
+  });
+
   return {
     props: {
       wardrobe: JSON.parse(JSON.stringify(wardrobe)),
       models: JSON.parse(JSON.stringify(models)),
+      savedLooks: JSON.parse(JSON.stringify(savedLooks)),
       campaignId: campaignId,
     },
   };

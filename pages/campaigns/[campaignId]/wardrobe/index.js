@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { prisma } from "@/utils/db";
 import { getSession } from "next-auth/react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Header from "@/components/Header/Header";
 import Modal from "react-modal";
 import Link from "next/link";
@@ -34,11 +34,13 @@ const modalStyle = {
 Modal.setAppElement("#__next");
 
 export default function Wardrobe({ wardrobe, campaginId }) {
-  // items is our wardrobe data, default to the original dataset.
+  // items is our wardrobe data, default to the original dataset
+  const router = useRouter();
   const [items, setItems] = useState(wardrobe);
   const [modalIsOpen, setIsOpen] = useState(false);
   const { asPath, basePath, pathname, query } = useRouter();
 
+  console.log(router);
   function openModal() {
     setIsOpen(true);
   }
@@ -56,6 +58,13 @@ export default function Wardrobe({ wardrobe, campaginId }) {
 
   // Only for the modal -> Removes duplicate categories from the list.
   const wardrobeSet = new Set(wardrobe.map((item) => item.category));
+
+  // If there are no items (means it's the user's first time here) redirect to the add item page -- https://nextjs.org/docs/messages/no-router-instance
+  useEffect(() => {
+    if (items.length === 0) {
+      router.push(`${asPath}/create`);
+    }
+  }, [items]);
 
   return (
     <main className={`${modalIsOpen === true ? "blur" : ""}`}>

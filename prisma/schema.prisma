@@ -99,10 +99,14 @@ model Wardrobe {
   category              String
   size                  String?
   savedLooks_top        SavedLooks[] @relation("Top")
+  savedLooks_top2       SavedLooks[] @relation("Top2")
   savedLooks_bottom     SavedLooks[] @relation("Bottom")
   savedLooks_shoes      SavedLooks[] @relation("Shoes")
   savedLooks_accessory1 SavedLooks[] @relation("Accessory1")
   savedLooks_accessory2 SavedLooks[] @relation("Accessory2")
+  savedLooks_accessory3 SavedLooks[] @relation("Accessory3")
+  savedLooks_accessory4 SavedLooks[] @relation("Accessory4")
+  // SavedLooks            SavedLooks[]
 }
 
 model Moodboards {
@@ -143,19 +147,37 @@ model Models {
 }
 
 model SavedLooks {
-  id           String    @id @default(cuid())
-  campaign     Campaigns @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  campaignId   String
-  models       Models    @relation(fields: [modelId], references: [id])
-  modelId      String
-  top          Wardrobe  @relation("Top", fields: [topId], references: [id])
-  topId        String
-  bottom       Wardrobe  @relation("Bottom", fields: [bottomId], references: [id])
-  bottomId     String
-  shoes        Wardrobe  @relation("Shoes", fields: [shoesId], references: [id])
-  shoesId      String
-  accessory1   Wardrobe  @relation("Accessory1", fields: [accessory1Id], references: [id])
+  id         String    @id @default(cuid())
+  campaign   Campaigns @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  campaignId String
+
+  models  Models @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  modelId String
+
+  top   Wardrobe @relation("Top", fields: [topId], references: [id], onDelete: Cascade)
+  topId String
+
+  top2   Wardrobe @relation("Top2", fields: [top2Id], references: [id], onDelete: Cascade)
+  top2Id String
+
+  bottom   Wardrobe @relation("Bottom", fields: [bottomId], references: [id], onDelete: Cascade)
+  bottomId String
+
+  shoes   Wardrobe @relation("Shoes", fields: [shoesId], references: [id], onDelete: Cascade)
+  shoesId String
+
+  accessory1   Wardrobe @relation("Accessory1", fields: [accessory1Id], references: [id], onDelete: Cascade)
   accessory1Id String
-  accessory2   Wardrobe  @relation("Accessory2", fields: [accessory2Id], references: [id])
+
+  accessory2   Wardrobe @relation("Accessory2", fields: [accessory2Id], references: [id], onDelete: Cascade)
   accessory2Id String
+
+  accessory3   Wardrobe @relation("Accessory3", fields: [accessory3Id], references: [id], onDelete: Cascade)
+  accessory3Id String
+
+  accessory4   Wardrobe @relation("Accessory4", fields: [accessory4Id], references: [id], onDelete: Cascade)
+  accessory4Id String
+
+  // Wardrobe   Wardrobe? @relation(fields: [wardrobeId], references: [id], onDelete: Cascade)
+  // wardrobeId String?
 }
