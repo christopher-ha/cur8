@@ -92,19 +92,19 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
 
     switch (activeBlock) {
       case "faces":
-        setFace(item.id);
+        setFace({ id: item.id, url: item.urlFace });
         break;
       case "tops":
-        setTop(item.id);
+        setTop({ id: item.id, url: item.url });
         break;
       case "bottoms":
-        setBottom(item.id);
+        setBottom({ id: item.id, url: item.url });
         break;
       case "shoes":
-        setShoes(item.id);
+        setShoes({ id: item.id, url: item.url });
         break;
       case "accessory":
-        setAccessory(item.id);
+        setAccessory({ id: item.id, url: item.url });
         break;
     }
   }
@@ -120,50 +120,78 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
         <div className={styles.block__head__wrapper}>
           <div
             className={styles.block__head}
+            style={{ backgroundColor: face ? "white" : "" }}
             // onClick, open our modal and pass the category into our handleActive function which filters our data and renders our components in the modal.
             onClick={() => {
               openModal();
               handleActive("faces");
             }}
           >
-            <h5>+ FACE</h5>
+            {!face ? (
+              <h5>+ FACE </h5>
+            ) : (
+              <img className={styles.block__filled} src={face.url} />
+            )}
           </div>
         </div>
         <div
           className={styles.block__accessory}
+          style={{ backgroundColor: accessory ? "white" : "" }}
           onClick={() => {
             openModal();
             handleActive("accessory");
           }}
         >
-          <h5>+ ACCESSORY</h5>
+          {!accessory ? (
+            <h5>+ ACCESSORY</h5>
+          ) : (
+            <img
+              className={styles.block__filled__accessory}
+              src={accessory.url}
+            />
+          )}
         </div>
         <div
           className={styles.block__top}
+          style={{ backgroundColor: top ? "white" : "" }}
           onClick={() => {
             openModal();
             handleActive("tops");
           }}
         >
-          <h5>+ TOP</h5>
+          {!top ? (
+            <h5>+ TOP</h5>
+          ) : (
+            <img className={styles.block__filled} src={top.url} />
+          )}
         </div>
         <div
           className={styles.block__bottom}
+          style={{ backgroundColor: bottom ? "white" : "" }}
           onClick={() => {
             openModal();
             handleActive("bottoms");
           }}
         >
-          <h5>+ BOTTOM</h5>
+          {!bottom ? (
+            <h5>+ BOTTOM</h5>
+          ) : (
+            <img className={styles.block__filled} src={bottom.url} />
+          )}
         </div>
         <div
           className={styles.block__shoes}
+          style={{ backgroundColor: shoes ? "white" : "" }}
           onClick={() => {
             openModal();
             handleActive("shoes");
           }}
         >
-          <h5>+ SHOES</h5>
+          {!shoes ? (
+            <h5>+ SHOES</h5>
+          ) : (
+            <img className={styles.block__filled} src={shoes.url} />
+          )}
         </div>
       </section>
 

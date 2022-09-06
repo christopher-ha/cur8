@@ -11,6 +11,15 @@
 }
 
 .block {
+  &__filled {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  &__filled__accessory {
+    max-width: 100%;
+  }
+
   &__head {
     width: calc(25% - 0.25rem);
     background-color: $light-gray;

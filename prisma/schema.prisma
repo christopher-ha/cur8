@@ -100,6 +100,7 @@ model Wardrobe {
   size                  String?
   savedLooks_top        SavedLooks[] @relation("Top")
   savedLooks_top2       SavedLooks[] @relation("Top2")
+  // savedLooks_dress      SavedLooks[] @relation("Dress")
   savedLooks_bottom     SavedLooks[] @relation("Bottom")
   savedLooks_shoes      SavedLooks[] @relation("Shoes")
   savedLooks_accessory1 SavedLooks[] @relation("Accessory1")
@@ -159,6 +160,9 @@ model SavedLooks {
 
   top2   Wardrobe @relation("Top2", fields: [top2Id], references: [id], onDelete: Cascade)
   top2Id String
+
+  // dress   Wardrobe @relation("Dress", fields: [dressId], references: [id], onDelete: Cascade)
+  // dressId String
 
   bottom   Wardrobe @relation("Bottom", fields: [bottomId], references: [id], onDelete: Cascade)
   bottomId String
