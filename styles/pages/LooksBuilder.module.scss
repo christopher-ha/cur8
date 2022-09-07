@@ -11,6 +11,14 @@
 }
 
 .block {
+  &__main {
+    grid-column: 2 / span 2;
+
+    & > * {
+      margin-bottom: 0.5rem;
+    }
+  }
+
   &__filled {
     max-width: 100%;
     max-height: 100%;

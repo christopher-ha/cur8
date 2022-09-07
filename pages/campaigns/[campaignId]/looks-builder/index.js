@@ -46,7 +46,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
   const { asPath, basePath, pathname, query } = useRouter();
 
   const [face, setFace] = useState("");
-  const [top1, setTop] = useState("");
+  const [top1, setTop1] = useState("");
   const [top2, setTop2] = useState("");
   const [bottom, setBottom] = useState("");
   const [shoes, setShoes] = useState("");
@@ -147,8 +147,11 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
       case "faces":
         setFace({ id: item.id, url: item.urlFace });
         break;
-      case "tops":
-        setTop({ id: item.id, url: item.url });
+      case "top1":
+        setTop1({ id: item.id, url: item.url });
+        break;
+      case "top2":
+        setTop2({ id: item.id, url: item.url });
         break;
       case "bottoms":
         setBottom({ id: item.id, url: item.url });
@@ -270,51 +273,57 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
             )}
           </div>
         </div>
-        <div
-          className={styles.block__top}
-          style={{ backgroundColor: top1 ? "white" : "#f2f2f2" }}
-          onClick={() => {
-            openModal();
-            handleActive("tops");
-          }}
-        >
-          {!top1 ? (
-            <h5>+ TOP</h5>
-          ) : (
-            <img className={styles.block__filled} src={top1.url} alt="Top" />
-          )}
-        </div>
-        <div
-          className={styles.block__bottom}
-          style={{ backgroundColor: bottom ? "white" : "#f2f2f2" }}
-          onClick={() => {
-            openModal();
-            handleActive("bottoms");
-          }}
-        >
-          {!bottom ? (
-            <h5>+ BOTTOM</h5>
-          ) : (
-            <img
-              className={styles.block__filled}
-              src={bottom.url}
-              alt="Bottom"
-            />
-          )}
-        </div>
-        <div
-          className={styles.block__shoes}
-          style={{ backgroundColor: shoes ? "white" : "#f2f2f2" }}
-          onClick={() => {
-            openModal();
-            handleActive("shoes");
-          }}
-        >
-          {!shoes ? (
-            <h5>+ SHOES</h5>
-          ) : (
-            <img className={styles.block__filled} src={shoes.url} alt="Shoes" />
-          )}
+        <div className={styles.block__main}>
+          <div
+            className={styles.block__top}
+            style={{ backgroundColor: top1 ? "white" : "#f2f2f2" }}
+            onClick={() => {
+              openModal();
+              handleActive("top1");
+            }}
+          >
+            {!top1 ? (
+              <h5>+ TOP</h5>
+            ) : (
+              <img className={styles.block__filled} src={top1.url} alt="Top" />
+            )}
+          </div>
+          <div
+            className={styles.block__bottom}
+            style={{ backgroundColor: bottom ? "white" : "#f2f2f2" }}
+            onClick={() => {
+              openModal();
+              handleActive("bottoms");
+            }}
+          >
+            {!bottom ? (
+              <h5>+ BOTTOM</h5>
+            ) : (
+              <img
+                className={styles.block__filled}
+                src={bottom.url}
+                alt="Bottom"
+              />
+            )}
+          </div>
+          <div
+            className={styles.block__shoes}
+            style={{ backgroundColor: shoes ? "white" : "#f2f2f2" }}
+            onClick={() => {
+              openModal();
+              handleActive("shoes");
+            }}
+          >
+            {!shoes ? (
+              <h5>+ SHOES</h5>
+            ) : (
+              <img
+                className={styles.block__filled}
+                src={shoes.url}
+                alt="Shoes"
+              />
+            )}
+          </div>
         </div>
       </section>
 
