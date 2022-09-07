@@ -11,36 +11,51 @@ async function saveLook(req, res) {
   const session = await getSession({ req });
   const userId = session.user.id;
 
-  const { face, top, bottom, shoes, accessory } = req.body.formData;
-  console.log(face, top, bottom, shoes, accessory);
+  const {
+    face,
+    top1,
+    top2,
+    bottom,
+    shoes,
+    accessory1,
+    accessory2,
+    accessory3,
+    accessory4,
+    campaignId,
+  } = req.body;
+
+  console.log(
+    face,
+    top1,
+    top2,
+    bottom,
+    shoes,
+    accessory1,
+    accessory2,
+    accessory3,
+    accessory4,
+    campaignId
+  );
 
   try {
-    // Create the campaign
-    const campaign = await prisma.savedLooks.create({
-      // data: {
-      //   modelId: face,
-      //   topId: top,
-      //   bottomId:
-      // },
-    });
+    console.log(req.body);
 
-    // Find the logged in user's information
-    const user = await prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
-
-    // Automatically generate a team linking the campaignId and userId, along with auto-filling their role for that team. This can be edited later. Give this user "Creator" level permissions.
-    const team = await prisma.teams.create({
+    // Store the ids of the models face and items inside of the database.
+    const look = await prisma.savedLooks.create({
       data: {
-        campaignId: campaign.id,
-        userId: user.id,
-        role: user.role,
-        permissions: "Creator",
+        campaignId: campaignId,
+        modelId: face,
+        top1Id: top1,
+        top2Id: top2,
+        bottomId: bottom,
+        shoesId: shoes,
+        accessory1Id: accessory1,
+        accessory2Id: accessory2,
+        accessory3Id: accessory3,
+        accessory4Id: accessory4,
       },
     });
-    return res.status(200).json(campaign, { success: true });
+    return res.status(200).json(look, { success: true });
   } catch (error) {
     console.error("Request error", error);
     res.status(500).json({ error: "Error creating campaign", success: false });

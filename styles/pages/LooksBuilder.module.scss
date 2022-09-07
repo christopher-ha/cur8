@@ -26,6 +26,8 @@
 
   &__filled__accessory {
     max-width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
   }
 
   &__head {

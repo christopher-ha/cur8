@@ -50,12 +50,12 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
   const [top2, setTop2] = useState("");
   const [bottom, setBottom] = useState("");
   const [shoes, setShoes] = useState("");
-  // Array.apply creates an array of a certain length and fills it with empty values. This will be the template for us to set the items within the accessories array.
-  // const [accessory, setAccessory] = useState(Array.apply(null, Array(4)));
   const [accessory1, setAccessory1] = useState("");
   const [accessory2, setAccessory2] = useState("");
   const [accessory3, setAccessory3] = useState("");
   const [accessory4, setAccessory4] = useState("");
+
+  console.log(query.campaignId);
 
   function openModal() {
     setIsOpen(true);
@@ -67,11 +67,13 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
     setIsOpen(false);
   }
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    console.log("Click");
+    e.preventDefault();
     axios
       .post("/api/looks-builder", {
         face: face.id,
-        top: top1.id,
+        top1: top1.id,
         top2: top2.id,
         bottom: bottom.id,
         shoes: shoes.id,
@@ -79,6 +81,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
         accessory2: accessory2.id,
         accessory3: accessory3.id,
         accessory4: accessory4.id,
+        campaignId: query.campaignId,
       })
       .then((response) => {
         console.log(response);
@@ -103,14 +106,6 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
   // Filters the items based on the block that was selected
   function handleFilter(category) {
     console.log(category);
-
-    // if (category === "tops" || category === "bottoms" || category === "shoes") {
-    //   return setItems(wardrobe.filter((item) => item.category === category));
-    // } else if (category.startsWith("accessory")) {
-    //   return setItems(wardrobe.filter((item) => item.category === "accessory"));
-    // } else if (category === "faces") {
-    //   return setItems(models);
-    // }
 
     switch (category) {
       case "faces":
@@ -181,7 +176,12 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
       </Head>
       <Header title={"Looks Builder"} />
 
-      <section className={styles.looks}>
+      <form
+        className={styles.looks}
+        id="looks-builder"
+        method="POST"
+        onSubmit={handleSubmit}
+      >
         <div className={styles.block__head__wrapper}>
           <div
             className={styles.block__head}
@@ -218,60 +218,74 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
               />
             )}
           </div>
-          <div
-            className={styles.block__accessory}
-            style={{ backgroundColor: accessory2 ? "white" : "#f2f2f2" }}
-            onClick={() => {
-              openModal();
-              handleActive("accessory2");
-            }}
-          >
-            {!accessory2 ? (
-              <h5>+ ACCESSORY</h5>
-            ) : (
-              <img
-                className={styles.block__filled__accessory}
-                src={accessory2.url}
-                alt="Accessory"
-              />
-            )}
-          </div>
-          <div
-            className={styles.block__accessory}
-            style={{ backgroundColor: accessory3 ? "white" : "#f2f2f2" }}
-            onClick={() => {
-              openModal();
-              handleActive("accessory3");
-            }}
-          >
-            {!accessory3 ? (
-              <h5>+ ACCESSORY</h5>
-            ) : (
-              <img
-                className={styles.block__filled__accessory}
-                src={accessory3.url}
-                alt="Accessory"
-              />
-            )}
-          </div>
-          <div
-            className={styles.block__accessory}
-            style={{ backgroundColor: accessory4 ? "white" : "#f2f2f2" }}
-            onClick={() => {
-              openModal();
-              handleActive("accessory4");
-            }}
-          >
-            {!accessory4 ? (
-              <h5>+ ACCESSORY</h5>
-            ) : (
-              <img
-                className={styles.block__filled__accessory}
-                src={accessory4.url}
-                alt="Accessory"
-              />
-            )}
-          </div>
+          {accessory1 ? (
+            <div
+              className={styles.block__accessory}
+              style={{ backgroundColor: accessory2 ? "white" : "#f2f2f2" }}
+              onClick={() => {
+                openModal();
+                handleActive("accessory2");
+              }}
+            >
+              {!accessory2 ? (
+                <h5>+ ACCESSORY</h5>
+              ) : (
+                <img
+                  className={styles.block__filled__accessory}
+                  src={accessory2.url}
+                  alt="Accessory"
+                />
+              )}
+            </div>
+          ) : (
+            ""
+          )}
+
+          {accessory1 && accessory2 ? (
+            <div
+              className={styles.block__accessory}
+              style={{ backgroundColor: accessory3 ? "white" : "#f2f2f2" }}
+              onClick={() => {
+                openModal();
+                handleActive("accessory3");
+              }}
+            >
+              {!accessory3 ? (
+                <h5>+ ACCESSORY</h5>
+              ) : (
+                <img
+                  className={styles.block__filled__accessory}
+                  src={accessory3.url}
+                  alt="Accessory"
+                />
+              )}
+            </div>
+          ) : (
+            ""
+          )}
+
+          {accessory1 && accessory2 && accessory3 ? (
+            <div
+              className={styles.block__accessory}
+              style={{ backgroundColor: accessory4 ? "white" : "#f2f2f2" }}
+              onClick={() => {
+                openModal();
+                handleActive("accessory4");
+              }}
+            >
+              {!accessory4 ? (
+                <h5>+ ACCESSORY</h5>
+              ) : (
+                <img
+                  className={styles.block__filled__accessory}
+                  src={accessory4.url}
+                  alt="Accessory"
+                />
+              )}
+            </div>
+          ) : (
+            ""
+          )}
         </div>
         <div className={styles.block__main}>
           <div
@@ -325,12 +339,14 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
             )}
           </div>
         </div>
-      </section>
+      </form>
 
       <div className={styles.buttons}>
         <button>Clear</button>
         <button>View Saved</button>
-        <button onSubmit={handleSubmit}>Save</button>
+        <button type="submit" form="looks-builder">
+          Save
+        </button>
       </div>
 
       <Modal
@@ -450,7 +466,7 @@ export async function getServerSideProps(context) {
       campaignId: campaignId,
     },
     include: {
-      top: {
+      top1: {
         select: {
           url: true,
         },

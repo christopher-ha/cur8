@@ -98,7 +98,7 @@ model Wardrobe {
   description           String
   category              String
   size                  String?
-  savedLooks_top        SavedLooks[] @relation("Top")
+  savedLooks_top1       SavedLooks[] @relation("Top1")
   savedLooks_top2       SavedLooks[] @relation("Top2")
   savedLooks_bottom     SavedLooks[] @relation("Bottom")
   savedLooks_shoes      SavedLooks[] @relation("Shoes")
@@ -150,14 +150,14 @@ model SavedLooks {
   campaign   Campaigns @relation(fields: [campaignId], references: [id], onDelete: Cascade)
   campaignId String
 
-  models  Models @relation(fields: [modelId], references: [id], onDelete: Cascade)
-  modelId String
+  models  Models? @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  modelId String?
 
-  top   Wardrobe @relation("Top", fields: [topId], references: [id], onDelete: Cascade)
-  topId String
+  top1   Wardrobe @relation("Top1", fields: [top1Id], references: [id], onDelete: Cascade)
+  top1Id String
 
-  top2   Wardrobe @relation("Top2", fields: [top2Id], references: [id], onDelete: Cascade)
-  top2Id String
+  top2   Wardrobe? @relation("Top2", fields: [top2Id], references: [id], onDelete: Cascade)
+  top2Id String?
 
   bottom   Wardrobe @relation("Bottom", fields: [bottomId], references: [id], onDelete: Cascade)
   bottomId String
@@ -165,15 +165,15 @@ model SavedLooks {
   shoes   Wardrobe @relation("Shoes", fields: [shoesId], references: [id], onDelete: Cascade)
   shoesId String
 
-  accessory1   Wardrobe @relation("Accessory1", fields: [accessory1Id], references: [id], onDelete: Cascade)
-  accessory1Id String
+  accessory1   Wardrobe? @relation("Accessory1", fields: [accessory1Id], references: [id], onDelete: Cascade)
+  accessory1Id String?
 
-  accessory2   Wardrobe @relation("Accessory2", fields: [accessory2Id], references: [id], onDelete: Cascade)
-  accessory2Id String
+  accessory2   Wardrobe? @relation("Accessory2", fields: [accessory2Id], references: [id], onDelete: Cascade)
+  accessory2Id String?
 
-  accessory3   Wardrobe @relation("Accessory3", fields: [accessory3Id], references: [id], onDelete: Cascade)
-  accessory3Id String
+  accessory3   Wardrobe? @relation("Accessory3", fields: [accessory3Id], references: [id], onDelete: Cascade)
+  accessory3Id String?
 
-  accessory4   Wardrobe @relation("Accessory4", fields: [accessory4Id], references: [id], onDelete: Cascade)
-  accessory4Id String
+  accessory4   Wardrobe? @relation("Accessory4", fields: [accessory4Id], references: [id], onDelete: Cascade)
+  accessory4Id String?
 }
