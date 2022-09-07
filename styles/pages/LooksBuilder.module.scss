@@ -22,7 +22,6 @@
 
   &__head {
     width: calc(25% - 0.25rem);
-    background-color: $light-gray;
     aspect-ratio: 1/1;
     @include looksBlock;
 
@@ -36,7 +35,12 @@
   &__accessory {
     grid-column: 1 / span 1;
     aspect-ratio: 1 / 1;
+    margin-bottom: 0.5rem;
     @include looksBlock;
+
+    &__wrapper {
+      // grid-auto-flow: dense;
+    }
   }
 
   &__top {

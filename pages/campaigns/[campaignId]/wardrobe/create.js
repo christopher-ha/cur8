@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useRouter } from "next/router";
 // import { prisma } from "@/utils/db";
 import { getSession } from "next-auth/react";
