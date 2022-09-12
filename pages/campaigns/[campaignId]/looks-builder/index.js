@@ -7,6 +7,7 @@ import Header from "@/components/Header/Header";
 import Modal from "react-modal";
 import Link from "next/link";
 import Head from "next/head";
+import Wardrobe from "@/components/Wardrobe/Wardrobe.js";
 // import styles from "@/styles/pages/Wardrobe.module.scss";
 import styles from "@/styles/pages/LooksBuilder.module.scss";
 import wardrobeStyles from "@/styles/pages/Wardrobe.module.scss";
@@ -42,6 +43,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
   // items is our wardrobe data, default to the original dataset.
   const [items, setItems] = useState();
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [modalType, setModalType] = useState();
   const [activeBlock, setActiveBlock] = useState();
   const { asPath, basePath, pathname, query } = useRouter();
 
@@ -57,8 +59,9 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
 
   console.log(query.campaignId);
 
-  function openModal() {
+  function openModal(type) {
     setIsOpen(true);
+    setModalType(type);
   }
   function afterOpenModal() {
     // references are now sync'd and can be accessed.
@@ -188,7 +191,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
             style={{ backgroundColor: face ? "white" : "#f2f2f2" }}
             // onClick, open our modal and pass the category into our handleActive function which filters our data and renders our components in the modal.
             onClick={() => {
-              openModal();
+              openModal("wardrobe");
               handleActive("faces");
             }}
           >
@@ -204,7 +207,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
             className={styles.block__accessory}
             style={{ backgroundColor: accessory1 ? "white" : "#f2f2f2" }}
             onClick={() => {
-              openModal();
+              openModal("wardrobe");
               handleActive("accessory1");
             }}
           >
@@ -223,7 +226,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
               className={styles.block__accessory}
               style={{ backgroundColor: accessory2 ? "white" : "#f2f2f2" }}
               onClick={() => {
-                openModal();
+                openModal("wardrobe");
                 handleActive("accessory2");
               }}
             >
@@ -246,7 +249,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
               className={styles.block__accessory}
               style={{ backgroundColor: accessory3 ? "white" : "#f2f2f2" }}
               onClick={() => {
-                openModal();
+                openModal("wardrobe");
                 handleActive("accessory3");
               }}
             >
@@ -269,7 +272,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
               className={styles.block__accessory}
               style={{ backgroundColor: accessory4 ? "white" : "#f2f2f2" }}
               onClick={() => {
-                openModal();
+                openModal("wardrobe");
                 handleActive("accessory4");
               }}
             >
@@ -292,7 +295,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
             className={styles.block__top}
             style={{ backgroundColor: top1 ? "white" : "#f2f2f2" }}
             onClick={() => {
-              openModal();
+              openModal("wardrobe");
               handleActive("top1");
             }}
           >
@@ -306,7 +309,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
             className={styles.block__bottom}
             style={{ backgroundColor: bottom ? "white" : "#f2f2f2" }}
             onClick={() => {
-              openModal();
+              openModal("wardrobe");
               handleActive("bottoms");
             }}
           >
@@ -324,7 +327,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
             className={styles.block__shoes}
             style={{ backgroundColor: shoes ? "white" : "#f2f2f2" }}
             onClick={() => {
-              openModal();
+              openModal("wardrobe");
               handleActive("shoes");
             }}
           >
@@ -343,7 +346,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
 
       <div className={styles.buttons}>
         <button>Clear</button>
-        <button>View Saved</button>
+        <button onClick={() => openModal("savedLooks")}>View Saved</button>
         <button type="submit" form="looks-builder">
           Save
         </button>
@@ -356,46 +359,57 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
         style={modalStyle}
         contentLabel="Wardrobe"
       >
-        {activeBlock === "top1" ||
-        activeBlock === "top2" ||
-        activeBlock === "bottoms" ||
-        activeBlock === "accessory1" ||
-        activeBlock === "accessory2" ||
-        activeBlock === "accessory3" ||
-        activeBlock === "accessory4" ||
-        activeBlock === "shoes" ? (
-          // If the user selected the tops / bottoms / accessories / shoes block, then render this.
-          // We group these together because they all come from the wardrobe and have the same data structure (object/key pairs), unlike the models data
-          <div className={wardrobeStyles.wardrobe}>
-            {items?.map((item) => {
-              return (
-                <div
-                  className={wardrobeStyles.wardrobe__item}
-                  key={item.id}
-                  onClick={() => {
-                    handleSelected(item);
-                    closeModal();
-                  }}
-                >
-                  <img
-                    className={wardrobeStyles.wardrobe__image}
-                    src={item.url}
-                    alt={item.description}
-                  />
-                  <div className={wardrobeStyles.wardrobe__text}>
-                    <h5 className={wardrobeStyles.wardrobe__brand}>
-                      {item.brand}
-                    </h5>
-                    <p className={wardrobeStyles.wardrobe__description}>
-                      {item.description} — {item.size}
-                    </p>
+        {/* <Wardrobe
+          activeBlock={activeBlock}
+          items={items}
+          models={models}
+          handleSelected={handleSelected}
+          closeModal={closeModal}
+          modalType={modalType}
+        /> */}
+
+        {(activeBlock === "top1" ||
+          activeBlock === "top2" ||
+          activeBlock === "bottoms" ||
+          activeBlock === "accessory1" ||
+          activeBlock === "accessory2" ||
+          activeBlock === "accessory3" ||
+          activeBlock === "accessory4" ||
+          activeBlock === "shoes") &&
+          modalType === "wardrobe" && (
+            // If the user selected the tops / bottoms / accessories / shoes block, then render this.
+            // We group these together because they all come from the wardrobe and have the same data structure (object/key pairs), unlike the models data
+            <div className={wardrobeStyles.wardrobe}>
+              {items?.map((item) => {
+                return (
+                  <div
+                    className={wardrobeStyles.wardrobe__item}
+                    key={item.id}
+                    onClick={() => {
+                      handleSelected(item);
+                      closeModal();
+                    }}
+                  >
+                    <img
+                      className={wardrobeStyles.wardrobe__image}
+                      src={item.url}
+                      alt={item.description}
+                    />
+                    <div className={wardrobeStyles.wardrobe__text}>
+                      <h5 className={wardrobeStyles.wardrobe__brand}>
+                        {item.brand}
+                      </h5>
+                      <p className={wardrobeStyles.wardrobe__description}>
+                        {item.description} — {item.size}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          // If the activeBlock isn't any of those, then it must be the faces. Render the list of faces.
+                );
+              })}
+            </div>
+          )}
+
+        {activeBlock === "faces" && (
           <div className={wardrobeStyles.wardrobe}>
             {models?.map((model) => {
               return (
@@ -425,6 +439,8 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
             })}
           </div>
         )}
+
+        {modalType === "savedLooks" && <p>This is the saved looks</p>}
 
         <div>
           <button

@@ -47,10 +47,6 @@
     aspect-ratio: 1 / 1;
     margin-bottom: 0.5rem;
     @include looksBlock;
-
-    &__wrapper {
-      // grid-auto-flow: dense;
-    }
   }
 
   &__top {
@@ -91,3 +87,26 @@
   left: 50%;
   transform: translate(-50%, 0);
 }
+
+// .test {
+//   &__image {
+//     grid-column: 2 / span 2;
+//     border: 1px solid $black;
+//     object-fit: contain;
+//     height: fit-content;
+//   }
+
+//   &__container {
+//     display: grid;
+//     grid-template-columns: repeat(4, 1fr);
+//     grid-gap: $mobile-grid-gap;
+//     // position: relative;
+//     height: fit-content;
+//   }
+
+//   &__grid {
+//     // display: grid;
+//     // grid-template-columns: repeat(4, 1fr);
+//     // grid-gap: $mobile-grid-gap;
+//   }
+// }
