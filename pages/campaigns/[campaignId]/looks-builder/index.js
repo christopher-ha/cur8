@@ -409,7 +409,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
             </div>
           )}
 
-        {activeBlock === "faces" && (
+        {activeBlock === "faces" && modalType === "wardrobe" && (
           <div className={wardrobeStyles.wardrobe}>
             {models?.map((model) => {
               return (
@@ -440,7 +440,9 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
           </div>
         )}
 
-        {modalType === "savedLooks" && <p>This is the saved looks</p>}
+        {modalType === "savedLooks" && (
+          <p>This is where the saved looks will be</p>
+        )}
 
         <div>
           <button

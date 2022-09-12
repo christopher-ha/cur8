@@ -34,7 +34,7 @@ export default function Images({ content }) {
       )
     ) {
       try {
-        const responseDB = await axios.delete("/api/moodboards", {
+        const responseDB = await axios.delete("/api/moodboard", {
           data: { selected: selected.id },
         });
         const responseAWS = await axios.delete("/api/s3", {
@@ -49,7 +49,7 @@ export default function Images({ content }) {
       }
     } else {
       try {
-        const response = await axios.delete("/api/moodboards", {
+        const response = await axios.delete("/api/moodboard", {
           data: { selected: selected.id },
         });
         console.log(response);

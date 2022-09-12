@@ -10,7 +10,7 @@ export default function UploadImages() {
   // Add images to Prisma DB via serverless API
   const submitData = async (url, text) => {
     try {
-      const response = await axios.post("/api/moodboards", {
+      const response = await axios.post("/api/moodboard", {
         url: url,
         text: text,
         moodboardId: router.query.moodboardId,

@@ -29,9 +29,11 @@ export default function Moodboards({ moodboards }) {
             </div>
           </Link>
         ))}
-        <div className={styles.block}>
-          <h4 className={styles.block__title}>+ CREATE MOODBOARD </h4>
-        </div>
+        <Link href={`${asPath}/create`}>
+          <div className={styles.block}>
+            <h4 className={styles.block__title}>+ CREATE MOODBOARD </h4>
+          </div>
+        </Link>
       </section>
     </main>
   );
