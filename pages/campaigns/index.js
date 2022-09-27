@@ -60,17 +60,21 @@ export async function getServerSideProps(context) {
 
   const userId = session.user.id;
 
-  // Find all the campaigns where the user is a part of the team
-  const campaignIds = await prisma.teams.findMany({
+  // Get a list of all the teams that the user is a part of, which includes campaign ids.
+  const teams = await prisma.teams.findMany({
     where: {
       userId: userId,
     },
   });
+  console.log(teams);
 
-  // Find all the campaigns using the campaign-ids found in the teams table.
+  // Create an array of ids from all the campaigns that the user a part of.
+  let campaignIds = teams.map((team) => team.campaignId);
+
+  // Find all the campaigns using the campaign ids found in the teams table.
   const campaigns = await prisma.campaigns.findMany({
     where: {
-      id: campaignIds.campaignId,
+      id: { in: campaignIds },
     },
   });
 

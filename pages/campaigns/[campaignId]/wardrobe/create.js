@@ -65,16 +65,18 @@ export default function WardrobeCreate() {
 
   // This is a solution to the 6s processing time: we run the function after a period of inactivity to process the image while they are filling out the form. This allows us to have a final image url by the time they submit the form === visually we go from a 6s -> 0s delay, as if the image was instantly processed. In technical terms, this is called debouncing the function.
   useEffect(() => {
+    let identifier;
     // If there is no cropped area, but an image was uploaded and the user hasn't interacted in 7 seconds, run the POST function.
     if (image !== null) {
-      const identifier = setTimeout(() => {
+      identifier = setTimeout(() => {
         console.log("POST");
         setRembgIsLoading(true);
         handleRembg();
       }, 7000);
+
       // If the user has uploaded an image AND cropped, but hasn't touched it in 3.5 seconds, run the POST function.
     } else if (image !== null && croppedImageURL !== null) {
-      const identifier = setTimeout(() => {
+      identifier = setTimeout(() => {
         console.log("POST");
         setRembgIsLoading(true);
         handleRembg();
