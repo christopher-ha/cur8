@@ -12,6 +12,7 @@ import Wardrobe from "@/components/Wardrobe/Wardrobe.js";
 import styles from "@/styles/pages/LooksBuilder.module.scss";
 import wardrobeStyles from "@/styles/pages/Wardrobe.module.scss";
 import axios from "axios";
+import { ConnectContactLens } from "aws-sdk";
 
 const modalStyle = {
   overlay: {
@@ -45,17 +46,15 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
   const [modalIsOpen, setIsOpen] = useState(false);
   const [modalType, setModalType] = useState();
   const [activeBlock, setActiveBlock] = useState();
+  const [selectedItem, setSelectedItem] = useState();
+  const [isExistingItem, setIsExistingItem] = useState(false);
   const { asPath, basePath, pathname, query } = useRouter();
 
   const [face, setFace] = useState("");
-  const [top1, setTop1] = useState("");
-  const [top2, setTop2] = useState("");
-  const [bottom, setBottom] = useState("");
+  const [tops, setTops] = useState([]);
+  const [bottoms, setBottoms] = useState([]);
   const [shoes, setShoes] = useState("");
-  const [accessory1, setAccessory1] = useState("");
-  const [accessory2, setAccessory2] = useState("");
-  const [accessory3, setAccessory3] = useState("");
-  const [accessory4, setAccessory4] = useState("");
+  const [accessories, setAccessories] = useState([]);
 
   console.log(query.campaignId);
 
@@ -100,6 +99,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
 
   // Since we are running two functions that take the same param, it was easier to combine them into one onClick.
   async function handleActive(category) {
+    console.log(category);
     // Handles the data filtering, wait for this is finished before setActive which renders the component on screen.
     await handleFilter(category);
     // Handles conditional rendering (we need to know which one was clicked)
@@ -114,8 +114,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
       case "faces":
         setItems(models);
         break;
-      case "top1":
-      case "top2":
+      case "tops":
         setItems(
           wardrobe.filter((item) => item.category === "tops" && "dress")
         );
@@ -126,10 +125,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
       case "shoes":
         setItems(wardrobe.filter((item) => item.category === "shoes"));
         break;
-      case "accessory1":
-      case "accessory2":
-      case "accessory3":
-      case "accessory4":
+      case "accessories":
         setItems(wardrobe.filter((item) => item.category === "accessory"));
         break;
       default:
@@ -141,33 +137,39 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
     console.log(activeBlock);
     console.log(item);
 
+    // If the use selects an acccessory, but it is the + button, then add it to the end of the array
+    if (activeBlock === "accessories" && isExistingItem === false) {
+      setAccessories([...accessories, { id: item.id, url: item.url }]);
+    } // If the user selects an existing accesory, find the index of the item by id
+    else if (activeBlock === "accessories" && isExistingItem === true) {
+      const index = accessories.indexOf(selectedItem);
+      accessories.splice(index, 1, { id: item.id, url: item.url });
+    }
+
+    // If the use selects an acccessory, but it is the + button, then add it to the end of the array
+    if (activeBlock === "tops" && isExistingItem === false) {
+      setTops([...tops, { id: item.id, url: item.url }]);
+    } // If the user selects an existing accesory, find the index of the item by id
+    else if (activeBlock === "tops" && isExistingItem === true) {
+      const index = tops.indexOf(selectedItem);
+      tops.splice(index, 1, { id: item.id, url: item.url });
+    }
+
+    // If the use selects an acccessory, but it is the + button, then add it to the end of the array
+    if (activeBlock === "bottoms" && isExistingItem === false) {
+      setBottoms([...bottoms, { id: item.id, url: item.url }]);
+    } // If the user selects an existing accesory, find the index of the item by id
+    else if (activeBlock === "bottoms" && isExistingItem === true) {
+      const index = bottoms.indexOf(selectedItem);
+      bottoms.splice(index, 1, { id: item.id, url: item.url });
+    }
+
     switch (activeBlock) {
       case "faces":
         setFace({ id: item.id, url: item.urlFace });
         break;
-      case "top1":
-        setTop1({ id: item.id, url: item.url });
-        break;
-      case "top2":
-        setTop2({ id: item.id, url: item.url });
-        break;
-      case "bottoms":
-        setBottom({ id: item.id, url: item.url });
-        break;
       case "shoes":
         setShoes({ id: item.id, url: item.url });
-        break;
-      case "accessory1":
-        setAccessory1({ id: item.id, url: item.url });
-        break;
-      case "accessory2":
-        setAccessory2({ id: item.id, url: item.url });
-        break;
-      case "accessory3":
-        setAccessory3({ id: item.id, url: item.url });
-        break;
-      case "accessory4":
-        setAccessory4({ id: item.id, url: item.url });
         break;
     }
   }
@@ -205,124 +207,110 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
         <div className={styles.block__accessory__wrapper}>
           <div
             className={styles.block__accessory}
-            style={{ backgroundColor: accessory1 ? "white" : "#f2f2f2" }}
+            style={{
+              backgroundColor: accessories.length > 0 ? "white" : "#f2f2f2",
+            }}
             onClick={() => {
               openModal("wardrobe");
-              handleActive("accessory1");
+              handleActive("accessories");
             }}
           >
-            {!accessory1 ? (
-              <h5>+ ACCESSORY</h5>
-            ) : (
-              <img
-                className={styles.block__filled__accessory}
-                src={accessory1.url}
-                alt="Accessory"
-              />
-            )}
+            {/* This is the placeholder accessory*/}
+            {accessories.length === 0 ? <h5>+ ACCESSORY</h5> : ""}
           </div>
-          {accessory1 ? (
-            <div
-              className={styles.block__accessory}
-              style={{ backgroundColor: accessory2 ? "white" : "#f2f2f2" }}
-              onClick={() => {
-                openModal("wardrobe");
-                handleActive("accessory2");
-              }}
-            >
-              {!accessory2 ? (
-                <h5>+ ACCESSORY</h5>
-              ) : (
+          {/* Here is the displayed accessories */}
+          {accessories?.map((accessory) => {
+            return (
+              <div
+                className={styles.block__accessory}
+                style={{
+                  backgroundColor: accessories.length > 0 ? "white" : "#f2f2f2",
+                }}
+                onClick={() => {
+                  openModal("wardrobe");
+                  setSelectedItem(accessory.id);
+                  setIsExistingItem(true);
+                  handleActive("accessories");
+                }}
+                key={accessory.id}
+              >
                 <img
                   className={styles.block__filled__accessory}
-                  src={accessory2.url}
+                  src={accessory.url}
                   alt="Accessory"
                 />
-              )}
-            </div>
-          ) : (
-            ""
-          )}
-
-          {accessory1 && accessory2 ? (
-            <div
-              className={styles.block__accessory}
-              style={{ backgroundColor: accessory3 ? "white" : "#f2f2f2" }}
-              onClick={() => {
-                openModal("wardrobe");
-                handleActive("accessory3");
-              }}
-            >
-              {!accessory3 ? (
-                <h5>+ ACCESSORY</h5>
-              ) : (
-                <img
-                  className={styles.block__filled__accessory}
-                  src={accessory3.url}
-                  alt="Accessory"
-                />
-              )}
-            </div>
-          ) : (
-            ""
-          )}
-
-          {accessory1 && accessory2 && accessory3 ? (
-            <div
-              className={styles.block__accessory}
-              style={{ backgroundColor: accessory4 ? "white" : "#f2f2f2" }}
-              onClick={() => {
-                openModal("wardrobe");
-                handleActive("accessory4");
-              }}
-            >
-              {!accessory4 ? (
-                <h5>+ ACCESSORY</h5>
-              ) : (
-                <img
-                  className={styles.block__filled__accessory}
-                  src={accessory4.url}
-                  alt="Accessory"
-                />
-              )}
-            </div>
-          ) : (
-            ""
-          )}
+              </div>
+            );
+          })}
         </div>
+
         <div className={styles.block__main}>
           <div
             className={styles.block__top}
-            style={{ backgroundColor: top1 ? "white" : "#f2f2f2" }}
+            style={{ backgroundColor: tops.length > 0 ? "white" : "#f2f2f2" }}
             onClick={() => {
               openModal("wardrobe");
-              handleActive("top1");
+              handleActive("tops");
             }}
           >
-            {!top1 ? (
-              <h5>+ TOP</h5>
-            ) : (
-              <img className={styles.block__filled} src={top1.url} alt="Top" />
-            )}
+            {!tops.length > 0 ? <h5>+ TOP</h5> : ""}
           </div>
+          {tops?.map((top) => {
+            return (
+              <div
+                className={styles.block__top}
+                style={{
+                  backgroundColor: tops.length > 0 ? "white" : "#f2f2f2",
+                }}
+                onClick={() => {
+                  openModal("wardrobe");
+                  setSelectedItem(top.id);
+                  setIsExistingItem(true);
+                  handleActive("tops");
+                }}
+                key={top.id}
+              >
+                <img className={styles.block__filled} src={top.url} alt="Top" />
+              </div>
+            );
+          })}
+
           <div
             className={styles.block__bottom}
-            style={{ backgroundColor: bottom ? "white" : "#f2f2f2" }}
+            style={{
+              backgroundColor: bottoms.length > 0 ? "white" : "#f2f2f2",
+            }}
             onClick={() => {
               openModal("wardrobe");
               handleActive("bottoms");
             }}
           >
-            {!bottom ? (
-              <h5>+ BOTTOM</h5>
-            ) : (
-              <img
-                className={styles.block__filled}
-                src={bottom.url}
-                alt="Bottom"
-              />
-            )}
+            {bottoms.length === 0 ? <h5>+ BOTTOM</h5> : ""}
           </div>
+          {bottoms?.map((bottom) => {
+            return (
+              <div
+                className={styles.block__bottom}
+                style={{
+                  backgroundColor: bottoms.length > 0 ? "white" : "#f2f2f2",
+                }}
+                onClick={() => {
+                  openModal("wardrobe");
+                  setSelectedItem(bottom.id);
+                  setIsExistingItem(true);
+                  handleActive("bottoms");
+                }}
+                key={bottom.id}
+              >
+                <img
+                  className={styles.block__filled}
+                  src={bottom.url}
+                  alt="Top"
+                />
+              </div>
+            );
+          })}
+
           <div
             className={styles.block__shoes}
             style={{ backgroundColor: shoes ? "white" : "#f2f2f2" }}
@@ -368,13 +356,9 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
           modalType={modalType}
         /> */}
 
-        {(activeBlock === "top1" ||
-          activeBlock === "top2" ||
+        {(activeBlock === "tops" ||
           activeBlock === "bottoms" ||
-          activeBlock === "accessory1" ||
-          activeBlock === "accessory2" ||
-          activeBlock === "accessory3" ||
-          activeBlock === "accessory4" ||
+          activeBlock === "accessories" ||
           activeBlock === "shoes") &&
           modalType === "wardrobe" && (
             // If the user selected the tops / bottoms / accessories / shoes block, then render this.
@@ -387,6 +371,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
                     key={item.id}
                     onClick={() => {
                       handleSelected(item);
+                      setIsExistingItem(false);
                       closeModal();
                     }}
                   >
