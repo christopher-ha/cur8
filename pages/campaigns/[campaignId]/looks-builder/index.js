@@ -134,36 +134,37 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
   }
 
   function handleSelected(item) {
-    console.log(activeBlock);
-    console.log(item);
-
     // If the use selects an acccessory, but it is the + button, then add it to the end of the array
     if (activeBlock === "accessories" && isExistingItem === false) {
       setAccessories([...accessories, { id: item.id, url: item.url }]);
     } // If the user selects an existing accesory, find the index of the item by id
     else if (activeBlock === "accessories" && isExistingItem === true) {
-      const index = accessories.indexOf(selectedItem);
+      const index = accessories.findIndex((item) => item.id === selectedItem);
       accessories.splice(index, 1, { id: item.id, url: item.url });
     }
 
-    // If the use selects an acccessory, but it is the + button, then add it to the end of the array
+    // If the use selects a top, but it is the + button, then add it to the end of the array
     if (activeBlock === "tops" && isExistingItem === false) {
       setTops([...tops, { id: item.id, url: item.url }]);
     } // If the user selects an existing accesory, find the index of the item by id
     else if (activeBlock === "tops" && isExistingItem === true) {
-      const index = tops.indexOf(selectedItem);
+      const index = tops.findIndex((item) => item.id === selectedItem);
+      // console.log("tops:", tops);
+      // console.log("selectedItem:", selectedItem);
+      // console.log("index:", index);
       tops.splice(index, 1, { id: item.id, url: item.url });
     }
 
-    // If the use selects an acccessory, but it is the + button, then add it to the end of the array
+    // If the use selects a bottom, but it is the + button, then add it to the end of the array
     if (activeBlock === "bottoms" && isExistingItem === false) {
       setBottoms([...bottoms, { id: item.id, url: item.url }]);
     } // If the user selects an existing accesory, find the index of the item by id
     else if (activeBlock === "bottoms" && isExistingItem === true) {
-      const index = bottoms.indexOf(selectedItem);
+      const index = bottoms.findIndex((item) => item.id === selectedItem);
       bottoms.splice(index, 1, { id: item.id, url: item.url });
     }
 
+    // Conditions for face and shoes (single item)
     switch (activeBlock) {
       case "faces":
         setFace({ id: item.id, url: item.urlFace });
@@ -205,21 +206,8 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
           </div>
         </div>
         <div className={styles.block__accessory__wrapper}>
-          <div
-            className={styles.block__accessory}
-            style={{
-              backgroundColor: accessories.length > 0 ? "white" : "#f2f2f2",
-            }}
-            onClick={() => {
-              openModal("wardrobe");
-              handleActive("accessories");
-            }}
-          >
-            {/* This is the placeholder accessory*/}
-            {accessories.length === 0 ? <h5>+ ACCESSORY</h5> : ""}
-          </div>
           {/* Here is the displayed accessories */}
-          {accessories?.map((accessory) => {
+          {accessories?.map((accessory, index) => {
             return (
               <div
                 className={styles.block__accessory}
@@ -232,7 +220,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
                   setIsExistingItem(true);
                   handleActive("accessories");
                 }}
-                key={accessory.id}
+                key={index}
               >
                 <img
                   className={styles.block__filled__accessory}
@@ -242,75 +230,95 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
               </div>
             );
           })}
+          <div
+            className={styles.block__accessory}
+            style={{
+              backgroundColor: accessories.length > 0 ? "white" : "#f2f2f2",
+            }}
+            onClick={() => {
+              openModal("wardrobe");
+              handleActive("accessories");
+            }}
+          >
+            {/* This is the placeholder accessory*/}
+            {accessories.length === 0 ? <h5>+ ACCESSORY</h5> : "+"}
+          </div>
         </div>
 
         <div className={styles.block__main}>
-          <div
-            className={styles.block__top}
-            style={{ backgroundColor: tops.length > 0 ? "white" : "#f2f2f2" }}
-            onClick={() => {
-              openModal("wardrobe");
-              handleActive("tops");
-            }}
-          >
-            {!tops.length > 0 ? <h5>+ TOP</h5> : ""}
+          <div className={styles.block__scroll}>
+            {tops?.map((top, index) => {
+              return (
+                <div
+                  className={styles.block__top}
+                  style={{
+                    backgroundColor: tops.length > 0 ? "white" : "#f2f2f2",
+                  }}
+                  onClick={() => {
+                    openModal("wardrobe");
+                    setSelectedItem(top.id);
+                    setIsExistingItem(true);
+                    handleActive("tops");
+                  }}
+                  key={index}
+                >
+                  <img
+                    className={styles.block__filled}
+                    src={top.url}
+                    alt="Top"
+                  />
+                </div>
+              );
+            })}
+            <div
+              className={styles.block__top}
+              style={{ backgroundColor: tops.length > 0 ? "white" : "#f2f2f2" }}
+              onClick={() => {
+                openModal("wardrobe");
+                handleActive("tops");
+              }}
+            >
+              {!tops.length > 0 ? <h5>+ TOP</h5> : "+"}
+            </div>
           </div>
-          {tops?.map((top) => {
-            return (
-              <div
-                className={styles.block__top}
-                style={{
-                  backgroundColor: tops.length > 0 ? "white" : "#f2f2f2",
-                }}
-                onClick={() => {
-                  openModal("wardrobe");
-                  setSelectedItem(top.id);
-                  setIsExistingItem(true);
-                  handleActive("tops");
-                }}
-                key={top.id}
-              >
-                <img className={styles.block__filled} src={top.url} alt="Top" />
-              </div>
-            );
-          })}
 
-          <div
-            className={styles.block__bottom}
-            style={{
-              backgroundColor: bottoms.length > 0 ? "white" : "#f2f2f2",
-            }}
-            onClick={() => {
-              openModal("wardrobe");
-              handleActive("bottoms");
-            }}
-          >
-            {bottoms.length === 0 ? <h5>+ BOTTOM</h5> : ""}
+          <div className={styles.block__scroll}>
+            {bottoms?.map((bottom, index) => {
+              return (
+                <div
+                  className={styles.block__bottom}
+                  style={{
+                    backgroundColor: bottoms.length > 0 ? "white" : "#f2f2f2",
+                  }}
+                  onClick={() => {
+                    openModal("wardrobe");
+                    setSelectedItem(bottom.id);
+                    setIsExistingItem(true);
+                    handleActive("bottoms");
+                  }}
+                  key={index}
+                >
+                  <img
+                    className={styles.block__filled}
+                    src={bottom.url}
+                    alt="Top"
+                  />
+                </div>
+              );
+            })}
+            <div
+              className={styles.block__bottom}
+              style={{
+                backgroundColor: bottoms.length > 0 ? "white" : "#f2f2f2",
+              }}
+              onClick={() => {
+                openModal("wardrobe");
+                handleActive("bottoms");
+              }}
+            >
+              {bottoms.length === 0 ? <h5>+ BOTTOM</h5> : "+"}
+            </div>
           </div>
-          {bottoms?.map((bottom) => {
-            return (
-              <div
-                className={styles.block__bottom}
-                style={{
-                  backgroundColor: bottoms.length > 0 ? "white" : "#f2f2f2",
-                }}
-                onClick={() => {
-                  openModal("wardrobe");
-                  setSelectedItem(bottom.id);
-                  setIsExistingItem(true);
-                  handleActive("bottoms");
-                }}
-                key={bottom.id}
-              >
-                <img
-                  className={styles.block__filled}
-                  src={bottom.url}
-                  alt="Top"
-                />
-              </div>
-            );
-          })}
-
           <div
             className={styles.block__shoes}
             style={{ backgroundColor: shoes ? "white" : "#f2f2f2" }}
