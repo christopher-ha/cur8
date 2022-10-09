@@ -47,6 +47,7 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
   const [modalType, setModalType] = useState();
   const [activeBlock, setActiveBlock] = useState();
   const [selectedItem, setSelectedItem] = useState();
+  const [selectedIndex, setSelectedIndex] = useState();
   const [isExistingItem, setIsExistingItem] = useState(false);
   const { asPath, basePath, pathname, query } = useRouter();
 
@@ -139,8 +140,8 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
       setAccessories([...accessories, { id: item.id, url: item.url }]);
     } // If the user selects an existing accesory, find the index of the item by id
     else if (activeBlock === "accessories" && isExistingItem === true) {
-      const index = accessories.findIndex((item) => item.id === selectedItem);
-      accessories.splice(index, 1, { id: item.id, url: item.url });
+      // const index = accessories.findIndex((item) => item.id === selectedItem);
+      accessories.splice(selectedIndex, 1, { id: item.id, url: item.url });
     }
 
     // If the use selects a top, but it is the + button, then add it to the end of the array
@@ -148,11 +149,8 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
       setTops([...tops, { id: item.id, url: item.url }]);
     } // If the user selects an existing accesory, find the index of the item by id
     else if (activeBlock === "tops" && isExistingItem === true) {
-      const index = tops.findIndex((item) => item.id === selectedItem);
-      // console.log("tops:", tops);
-      // console.log("selectedItem:", selectedItem);
-      // console.log("index:", index);
-      tops.splice(index, 1, { id: item.id, url: item.url });
+      // const index = tops.findIndex((item) => item.id === selectedItem);
+      tops.splice(selectedIndex, 1, { id: item.id, url: item.url });
     }
 
     // If the use selects a bottom, but it is the + button, then add it to the end of the array
@@ -160,8 +158,8 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
       setBottoms([...bottoms, { id: item.id, url: item.url }]);
     } // If the user selects an existing accesory, find the index of the item by id
     else if (activeBlock === "bottoms" && isExistingItem === true) {
-      const index = bottoms.findIndex((item) => item.id === selectedItem);
-      bottoms.splice(index, 1, { id: item.id, url: item.url });
+      // const index = bottoms.findIndex((item) => item.id === selectedItem);
+      bottoms.splice(selectedIndex, 1, { id: item.id, url: item.url });
     }
 
     // Conditions for face and shoes (single item)
@@ -216,7 +214,8 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
                 }}
                 onClick={() => {
                   openModal("wardrobe");
-                  setSelectedItem(accessory.id);
+                  // setSelectedItem(accessory.id);
+                  setSelectedIndex(index);
                   setIsExistingItem(true);
                   handleActive("accessories");
                 }}
@@ -256,7 +255,8 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
                   }}
                   onClick={() => {
                     openModal("wardrobe");
-                    setSelectedItem(top.id);
+                    // setSelectedItem(top.id);
+                    setSelectedIndex(index);
                     setIsExistingItem(true);
                     handleActive("tops");
                   }}
@@ -292,7 +292,8 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
                   }}
                   onClick={() => {
                     openModal("wardrobe");
-                    setSelectedItem(bottom.id);
+                    // setSelectedItem(bottom.id);
+                    setSelectedIndex(index);
                     setIsExistingItem(true);
                     handleActive("bottoms");
                   }}
