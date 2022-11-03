@@ -11,31 +11,7 @@ async function saveLook(req, res) {
   const session = await getSession({ req });
   const userId = session.user.id;
 
-  const {
-    face,
-    top1,
-    top2,
-    bottom,
-    shoes,
-    accessory1,
-    accessory2,
-    accessory3,
-    accessory4,
-    campaignId,
-  } = req.body;
-
-  console.log(
-    face,
-    top1,
-    top2,
-    bottom,
-    shoes,
-    accessory1,
-    accessory2,
-    accessory3,
-    accessory4,
-    campaignId
-  );
+  const { face, tops, bottoms, shoes, accessories, campaignId } = req.body;
 
   try {
     console.log(req.body);
@@ -44,15 +20,11 @@ async function saveLook(req, res) {
     const look = await prisma.savedLooks.create({
       data: {
         campaignId: campaignId,
-        modelId: face,
-        top1Id: top1,
-        top2Id: top2,
-        bottomId: bottom,
-        shoesId: shoes,
-        accessory1Id: accessory1,
-        accessory2Id: accessory2,
-        accessory3Id: accessory3,
-        accessory4Id: accessory4,
+        model: face,
+        tops: tops,
+        bottoms: bottoms,
+        shoes: shoes,
+        accessories: accessories,
       },
     });
     return res.status(200).json(look, { success: true });

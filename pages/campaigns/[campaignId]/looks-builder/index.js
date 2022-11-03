@@ -76,14 +76,10 @@ export default function LooksBuilder({ wardrobe, models, savedLooks }) {
     axios
       .post("/api/looks-builder", {
         face: face.id,
-        top1: top1.id,
-        top2: top2.id,
-        bottom: bottom.id,
-        shoes: shoes.id,
-        accessory1: accessory1.id,
-        accessory2: accessory2.id,
-        accessory3: accessory3.id,
-        accessory4: accessory4.id,
+        tops: tops,
+        bottoms: bottoms,
+        shoes: shoes,
+        accessories: accessories,
         campaignId: query.campaignId,
       })
       .then((response) => {
@@ -476,21 +472,6 @@ export async function getServerSideProps(context) {
   const savedLooks = await prisma.savedLooks.findMany({
     where: {
       campaignId: campaignId,
-    },
-    include: {
-      top1: {
-        select: {
-          url: true,
-        },
-      },
-      top2: true,
-      bottom: true,
-      shoes: true,
-      accessory1: true,
-      accessory2: true,
-      accessory3: true,
-      accessory4: true,
-      models: true,
     },
   });
 
