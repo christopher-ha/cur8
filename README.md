@@ -5,6 +5,8 @@ Designed + Developed by [bhris.Digital](https://bhris.digital/) — [@bhris001](
 
 https://www.cur8.world/
 
+**Update: As of 8/22, this project has been deprecated. This repo has been publicized to display testament to product thinking, code quality, and my capability to work across a full stack project. Please be aware that none of the features may work as most of the services have been severed or deleted.**
+
 <img width="1128" alt="image" src="https://user-images.githubusercontent.com/63668974/182760473-3f63b00c-8dea-4ace-beef-9f669d9322fa.png">
 
 
